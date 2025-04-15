@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Unbounded } from "next/font/google";
+import { Toaster } from "react-hot-toast";
+import InitializeCart from "@/components/Cart/InitializeCart";
+import { Providers } from "@/providers/provider";
+import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
+import { Suspense } from "react";
+
+const unbounded = Unbounded({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-unbounded",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,12 +35,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${unbounded.variable}`}
       >
-        {children}
+        <Providers>
+          <Navbar />
+          <Toaster position="top-right" reverseOrder={false} />
+          <InitializeCart />
+          <div className="bg-white text-black">
+            <Suspense>
+              {children}
+            </Suspense>
+          </div>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
