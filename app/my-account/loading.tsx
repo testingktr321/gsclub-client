@@ -1,22 +1,11 @@
 "use client"
+import { Loader } from 'lucide-react';
 import React from 'react';
-
-// import { Circles } from 'react-loader-spinner';
-
 
 const Loading = () => {
   return (
-    <div className="h-screen flex justify-center items-center">
-      {/* <Circles
-        height="80"
-        width="80"
-        color="#619C0F"
-        ariaLabel="circles-loading"
-        wrapperStyle={{}}
-        wrapperClass=""
-        visible={true}
-      /> */}
-      loading...
+    <div className="h-[85vh] flex justify-center items-center">
+      <Loader className="w-6 h-6 -mt-10 animate-spin" />
     </div>
   );
 };
