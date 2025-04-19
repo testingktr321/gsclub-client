@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { Button } from "../ui/button";
 
 interface ShippingAddressFormData {
     id: string;
@@ -97,20 +98,22 @@ const ShippingAddressForm = ({ onSubmit, defaultValues, setShowModal }: Shipping
 
             {/* Buttons */}
             <div className="flex justify-end gap-4">
-                <button
+                <Button
+                    variant="secondary"
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-6 py-2 rounded-lg border transition-all duration-300 ease-in-out hover:scale-100"
+                    className=""
                 >
                     Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                     type="submit"
+                    variant="primary"
                     disabled={isSubmitting}
-                    className="bg-green px-6 py-2 rounded-lg text-white font-semibold hover:bg-darkGreen transition-all duration-300 ease-in-out hover:scale-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? "Submitting..." : "Save"}
-                </button>
+                </Button>
             </div>
         </form>
     );

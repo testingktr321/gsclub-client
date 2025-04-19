@@ -12,8 +12,8 @@ const Footer = () => {
     ];
 
     return (
-        <section className="bg-black text-white py-5 w-11/12 mx-auto font-unbounded">
-            <div className="flex flex-row items-center justify-between gap-6">
+        <section className="bg-black text-white py-5  font-unbounded">
+            <div className="flex flex-row items-center justify-between gap-6 w-11/12 mx-auto">
                 <div>
                     <Link href={"/"}>
                         <Image

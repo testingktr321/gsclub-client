@@ -262,7 +262,7 @@ const ShippingAddress: React.FC<ShippingAddressProps> = ({ onSelectCard, ischeck
       </div>
       <button
         onClick={handleAddNewCard}
-        className="bg-white text-black w-12 h-12 rounded-full flex justify-center items-center mt-4 shadow hover:shadow-lg transition cursor-pointer"
+        className="bg-white border border-gray-100 text-black w-12 h-12 rounded-full flex justify-center items-center mt-4 shadow hover:shadow-md transition cursor-pointer"
       >
         +
       </button>

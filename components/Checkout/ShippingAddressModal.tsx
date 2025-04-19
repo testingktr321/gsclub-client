@@ -38,7 +38,7 @@ const ShippingAddressModal = ({ selectedCard, onAddressSubmit }: ShippingAddress
                 <div className="w-full flex items-center justify-center">
                     <button
                         onClick={() => setShowModal(true)}
-                        className="bg-white text-black w-12 h-12 rounded-full flex justify-center items-center mt-4 shadow hover:shadow-lg transition"
+                        className="bg-white text-black w-12 h-12 border border-gray-100 rounded-full flex justify-center items-center mt-4 shadow hover:shadow-md cursor-pointer transition"
                     >
                         +
                     </button>
@@ -63,7 +63,7 @@ const ShippingAddressModal = ({ selectedCard, onAddressSubmit }: ShippingAddress
             <AnimatePresence>
                 {showModal && (
                     <motion.div
-                        className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+                        className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center items-center z-50"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}

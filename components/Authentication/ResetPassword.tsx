@@ -78,7 +78,7 @@ const ResetPassword = () => {
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <div className="min-h-[82vh] flex items- justify-center bg-white text-black font-unbounded pt-[11rem] lg:pt-[2rem] pb-[1rem] lg:pb-[4rem]">
+            <div className="min-h-[82vh] w-11/12 mx-auto flex items- justify-center bg-white text-black font-unbounded pt-[2rem] pb-[4rem]">
                 <div className="w-full max-w-md">
                     <h1 className="text-2xl font-semibold mb-6 text-center flex items-center gap-2 justify-center mr-4 hover:underline cursor-pointer"
                         onClick={() => router.back()}
@@ -148,7 +148,7 @@ const ResetPassword = () => {
                     <div className="text-center group text-sm text-[#666666] mt-5">
                         <Link href={"/login"}>
                             Remember your password?{" "}
-                            <span className="text-black group-hover:underline">
+                            <span className="text-black group-hover:underline font-medium">
                                 Login
                             </span>
                         </Link>

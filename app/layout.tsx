@@ -8,6 +8,7 @@ import { Providers } from "@/providers/provider";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { Suspense } from "react";
+import AgeVerification from "@/components/AgeVerification/AgeVerification";
 
 const unbounded = Unbounded({
   subsets: ["latin"],
@@ -47,6 +48,7 @@ export default function RootLayout({
           <InitializeCart />
           <div className="bg-white text-black">
             <Suspense>
+              <AgeVerification />
               {children}
             </Suspense>
           </div>

@@ -22,6 +22,12 @@ const Navbar = () => {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const { items } = useCart();
+    // Add state for sticky navbar
+    const [isSticky, setIsSticky] = useState(false);
+    const blackDivRef = useRef<HTMLDivElement>(null);
+    // Add ref for hamburger menu
+    const hamburgerMenuRef = useRef<HTMLDivElement>(null);
+    const hamburgerButtonRef = useRef<HTMLDivElement>(null);
 
     // Create a handler function for clicking the search container
     const handleSearchContainerClick = () => {
@@ -29,6 +35,42 @@ const Navbar = () => {
             searchInputRef.current.focus();
         }
     };
+
+    // Handle scroll event to make the aside sticky
+    useEffect(() => {
+        const handleScroll = () => {
+            if (blackDivRef.current) {
+                const blackDivBottom = blackDivRef.current.getBoundingClientRect().bottom;
+                setIsSticky(blackDivBottom <= 0);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    // Handle outside click for hamburger menu
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            // Check if hamburger menu is open and clicked outside of menu and button
+            if (
+                show &&
+                hamburgerMenuRef.current &&
+                hamburgerButtonRef.current &&
+                !hamburgerMenuRef.current.contains(event.target as Node) &&
+                !hamburgerButtonRef.current.contains(event.target as Node)
+            ) {
+                setshow(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [show]);
 
     // Debounce function with proper typing
     const debounce = <T extends unknown[]>(func: (...args: T) => void, delay: number): DebouncedFunction<T> => {
@@ -121,26 +163,30 @@ const Navbar = () => {
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <section className=''>
-                <div className='bg-black p-3 text-white text-center'>WARNING: These products contain nicotine. Nicotine is an addictive chemical.</div>
-                <aside className='bg-white py-4'>
+            <section className='font-unbounded'>
+                <div ref={blackDivRef} className='bg-black p-3 text-white text-center text-sm md:text-base'>WARNING: These products contain nicotine. Nicotine is an addictive chemical.</div>
+                <aside
+                    className={`bg-white py-4 ${isSticky ? 'fixed top-0 left-0 right-0 z-40 shadow-md' : ''}`}
+                    style={{ transition: 'all 0.3s ease' }}
+                >
                     <div className='w-11/12 mx-auto flex items-center justify-between'>
                         <div className="relative flex items-center md:gap-4">
                             <div
+                                ref={hamburgerButtonRef}
                                 onClick={() => setshow(!show)}
                                 className="relative w-10 z-30"
                             >
                                 <Image
-                                    src={"/images/hamburger.png"}
+                                    src={show ? "/images/hamburger2.png" : "/images/hamburger.png"}
                                     alt="hamburger"
                                     width={21}
                                     height={21}
-                                    className={`z-30 ${show ? "rotate-90" : "rotate-0"
-                                        } transition-all duration-300 ease-linear cursor-pointer`}
+                                    className={`z-30 ${show ? "rotate-90 w-[18px]" : "rotate-0 w-5"} transition-all duration-300 ease-linear cursor-pointer`}
                                 />
                             </div>
                             <div
-                                className={`absolute -top-2.5  -left-3.5 border shadow-2xl bg-gradient-to-r from-[#3E2FE1] to-[#8C14AC] z-10 rounded-b-xl rounded-tr-xl ${show ? "w-[230px] h-[430px]" : "w-0 h-0"
+                                ref={hamburgerMenuRef}
+                                className={`absolute -top-2.5 -left-3.5 border border-white shadow-2xl bg-gradient-to-r from-[#3E2FE1] to-[#8C14AC] z-10 rounded-b-xl rounded-tr-xl ${show ? "w-[230px] h-[430px]" : "w-0 h-0"
                                     } transition-all duration-300 ease-linear overflow-hidden`}
                             >
                                 <ul className="text-white text-[1.1rem] py-16 px-3 space-y-4 flex flex-col">
@@ -197,11 +243,18 @@ const Navbar = () => {
                                     }}
                                 />
 
-                                <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+                                {/* Search icon with click handler */}
+                                <div
+                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                                    onClick={() => {
+                                        setIsSearchFocused(true);
+                                        searchInputRef.current?.focus();
+                                    }}
+                                >
                                     <CiSearch size={20} />
                                 </div>
 
-                                {/* Animated logo */}
+                                {/* Animated logo - wrapped in Link so it will redirect */}
                                 <AnimatePresence>
                                     {!isSearchFocused && (
                                         <motion.div
@@ -210,7 +263,10 @@ const Navbar = () => {
                                             exit={{ opacity: 0, transition: { duration: 0.2 } }}
                                             className="md:hidden"
                                         >
-                                            <Link href={"/"}>
+                                            <Link
+                                                href="/"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
                                                 <Image
                                                     src={"/images/logo.png"}
                                                     width={150}
@@ -297,6 +353,8 @@ const Navbar = () => {
                         </div>
                     </div>
                 </aside>
+                {/* Add a placeholder div when navbar is sticky to prevent content jump */}
+                {isSticky && <div style={{ height: '76px' }}></div>}
             </section>
         </Suspense>
     )
