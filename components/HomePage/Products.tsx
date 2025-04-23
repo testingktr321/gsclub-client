@@ -8,31 +8,8 @@ import { useSession } from 'next-auth/react';
 import useCart from '@/hooks/useCart';
 import { FaSpinner } from 'react-icons/fa';
 import { useFilter } from '@/hooks/useFilter';
+import { Product } from '@/types/product';
 
-interface Image {
-    id: string;
-    url: string;
-}
-
-interface Brand {
-    id: string;
-    name: string;
-}
-
-interface Product {
-    id: string;
-    name: string;
-    description: string;
-    currentPrice: number;
-    originalPrice: number;
-    images: Image[];
-    brandId: string;
-    brand: Brand;
-    flavorId: string;
-    puffsId: string;
-    nicotineId: string;
-    createdAt: string;
-}
 
 interface ApiResponse {
     products: Product[];
@@ -92,7 +69,7 @@ const Products = () => {
     const handleAddToCart = async (productId: string, event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         event.preventDefault();
-        
+
         // Set loading state for this specific product
         setLoadingProducts(prev => ({ ...prev, [productId]: true }));
 
@@ -143,7 +120,7 @@ const Products = () => {
                     {products.map((product) => (
                         <Link href={`/product/${product.id}`} key={product.id}>
                             <div className="border-2 border-gray-200 rounded-3xl md:rounded-4xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                                <div className="aspect-square relative bg-gray-100 h-[50%]">
+                                <div className="aspect-square relative bg-gray-100 h-[42%] md:h-[50%]">
                                     {product.images.length > 0 ? (
                                         <img
                                             src={product.images[0].url}
@@ -156,19 +133,25 @@ const Products = () => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="py-6 px-6 flex flex-col flex-grow justify-between">
-                                    <div className="mb-2 md:mb-4">
+                                <div className="py-3 md:py-6 px-2 md:px-6 flex flex-col flex-grow justify-between">
+                                    <div className="">
                                         <div className="flex items-center justify-center text-sm md:text-xl">
                                             <span className="">${product.currentPrice.toFixed(2)}</span>
                                             <span className="ml-2 text-sm md:text-base text-gray-500 line-through">
                                                 ${product.originalPrice.toFixed(2)}
                                             </span>
                                         </div>
-                                        <h3 className="font-semibold text-base md:text-2xl mt-1.5 md:mt-3 text-center line-clamp-3">
+                                        <h3 className="font-semibold text-base md:text-2xl mt-1.5 md:mt-3 text-center line-clamp-2">
+                                            {product.brand.name}
+                                        </h3>
+                                        <h3 className="font-semibold text-base md:text-2xl text-center line-clamp-2 my-0.5 md:my-1 leading-5 md:leading-7">
                                             {product.name}
                                         </h3>
+                                        <h3 className="font-semibold text-base md:text-2xl text-center line-clamp-2">
+                                            {product.flavor.name}
+                                        </h3>
                                     </div>
-                                    <div className='w-full mt-auto mb-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
+                                    <div className='w-full mb-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
                                         <div>
                                             <span className="w-full underline">
                                                 View product

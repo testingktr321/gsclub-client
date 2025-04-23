@@ -38,6 +38,17 @@ const ProductPage = ({ product }: SingleProductProps) => {
         </div>;
     }
 
+    // Helper function to render field if it exists
+    const renderField = (label: string, value: string | null | undefined) => {
+        if (!value) return null;
+        return (
+            <div className="flex">
+                <p className="font-medium">{label}: </p>
+                <p className="ml-2">{value}</p>
+            </div>
+        );
+    };
+
     return (
         <main className='bg-white min-h-screen'>
             <section className="w-11/12 mx-auto py-7 flex flex-col lg:flex-row gap-3 md:gap-10 xl:gap-20 font-unbounded text-black">
@@ -60,127 +71,116 @@ const ProductPage = ({ product }: SingleProductProps) => {
 
                 {/* Product Details */}
                 <div className="w-full lg:w-[65%] py-3">
-                    <div className="space-y-4 md:space-y-6">
+                    <div className="space-y-5">
                         {/* Product Name */}
-                        <h1 className="text-3xl font-semibold text-[#0C0B0B]">
-                            {product.name}
+                        <h1 className="text-3xl font-semibold text-[#0C0B0B] leading-10">
+                            {product.brand.name} <br />
+                            {product.name} <br />
+                            {product.flavor.name}
                         </h1>
 
                         {/* Price */}
                         <div className="flex items-center gap-4">
-                            <span className="text-2xl font-bold">
+                            <span className="text-2xl font-medium">
                                 ${product.currentPrice.toFixed(2)}
                             </span>
-                            <span className="text-lg text-gray-500 line-through">
-                                ${product.originalPrice.toFixed(2)}
-                            </span>
+                            {product.originalPrice && (
+                                <span className="text-lg text-gray-500 line-through">
+                                    ${product.originalPrice.toFixed(2)}
+                                </span>
+                            )}
                         </div>
 
                         {/* Product Specifications */}
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <h2 className="font-bold text-xl text-[#0C0B0B]">Device Details:</h2>
-                            <div className="space-y-2">
-                                {product.brand && (
+                            <div className="space-y-1.5">
+                                {product.Nicotine && renderField("Nicotine Strength", product.Nicotine.name)}
+                                {/* Render all Puffs with descriptions */}
+                                {product.productPuffs && product.productPuffs.length > 0 && (
                                     <div className="flex">
-                                        <p className="">Brand: </p>
-                                        <p>{product.brand.name}</p>
+                                        <p className="font-medium">Puffs:</p>
+                                        <p className="ml-2">
+                                            {product.productPuffs.map((pp, index) => (
+                                                <span key={index}>
+                                                    {index > 0 && ' / '}
+                                                    {pp.puffs.name} {pp.puffDesc}
+                                                </span>
+                                            ))}
+                                        </p>
                                     </div>
                                 )}
 
-                                {product.flavor && (
-                                    <div className="flex">
-                                        <p className="">Flavor: </p>
-                                        <p>{product.flavor.name}</p>
+                                {/* Optional fields */}
+                                {renderField("E-liquid Content", product.eLiquidContent)}
+                                {renderField("Battery Capacity", product.batteryCapacity)}
+                                {renderField("Coil", product.coil)}
+                                {renderField("Firing Mechanism", product.firingMechanism)}
+                                {renderField("Type", product.type)}
+                                {renderField("Resistance", product.resistance)}
+                                {renderField("Power Range", product.powerRange)}
+                                {renderField("Charging", product.charging)}
+                                {product.extra && (
+                                    <div className='flex'>
+                                        <p className="font-medium">Extra Features:</p>
+                                        <div
+                                            className="prose max-w-none ml-2"
+                                            dangerouslySetInnerHTML={{ __html: product.extra }}
+                                        />
                                     </div>
                                 )}
 
-                                {product.Puffs && (
-                                    <div className="flex">
-                                        <p className="">Puff Count: </p>
-                                        <p>{product.Puffs.name}</p>
-                                    </div>
-                                )}
-
-                                {product.Nicotine && (
-                                    <div className="flex">
-                                        <p className="">Nicotine Strength: </p>
-                                        <p>{product.Nicotine.name}</p>
-                                    </div>
-                                )}
-
-                                {product.eLiquidContent && (
-                                    <div className="flex">
-                                        <p className="">E-liquid Contents: </p>
-                                        <p>{product.eLiquidContent}</p>
-                                    </div>
-                                )}
-
-                                {product.batteryCapacity && (
-                                    <div className="flex">
-                                        <p className="">Battery Capacity: </p>
-                                        <p>{product.batteryCapacity}</p>
-                                    </div>
-                                )}
-
-                                {product.coil && (
-                                    <div className="flex">
-                                        <p className="">Coil: </p>
-                                        <p>{product.coil}</p>
-                                    </div>
-                                )}
-
-                                {product.firingMechanism && (
-                                    <div className="flex">
-                                        <p className="">Firing Mechanism: </p>
-                                        <p>{product.firingMechanism}</p>
-                                    </div>
-                                )}
-
-                                {product.type && (
-                                    <div className="flex">
-                                        <p className="">Type: </p>
-                                        <p>{product.type}</p>
-                                    </div>
-                                )}
                             </div>
                         </div>
 
-                        {/* Add to Cart Button */}
+                        {/* Stock Action Section */}
                         <div className="mt-8 flex flex-col lg:flex-row w-full items-center gap-4">
-                            <div className="border border-slate-300 px-4 py-2 rounded-full flex items-center justify-between gap-6 w-full lg:w-fit">
-                                <span className="cursor-pointer" onClick={handleDecrement}>
-                                    <FaMinus />
-                                </span>
-                                {quantity}
-                                <span className="cursor-pointer" onClick={handleIncrement}>
-                                    <FaPlus />
-                                </span>
-                            </div>
+                            {product.isArchived ? (
+                                <div className="w-full text-center bg-gray-100 border border-gray-300 text-gray-600 py-3 rounded-full font-medium">
+                                    Not in Stock
+                                </div>
+                            ) : (
+                                <>
+                                    {/* Quantity Selector */}
+                                    <div className="border border-slate-300 px-4 py-2 rounded-full flex items-center justify-between gap-6 w-full lg:w-fit">
+                                        <span className="cursor-pointer" onClick={handleDecrement}>
+                                            <FaMinus />
+                                        </span>
+                                        {quantity}
+                                        <span className="cursor-pointer" onClick={handleIncrement}>
+                                            <FaPlus />
+                                        </span>
+                                    </div>
 
-                            <Button
-                                type="submit"
-                                variant="primary"
-                                className="px-8 w-full"
-                                disabled={isLoading}
-                                onClick={async (event: React.MouseEvent<HTMLButtonElement>) => {
-                                    event.stopPropagation();
-                                    setIsLoading(true);
+                                    {/* Add to Cart Button */}
+                                    <Button
+                                        type="submit"
+                                        variant="primary"
+                                        className="px-8 w-full"
+                                        disabled={isLoading}
+                                        onClick={async (event: React.MouseEvent<HTMLButtonElement>) => {
+                                            event.stopPropagation();
+                                            setIsLoading(true);
 
-                                    const productData = {
-                                        id: product.id,
-                                        quantity,
-                                    };
+                                            const productData = {
+                                                id: product.id,
+                                                quantity,
+                                            };
 
-                                    await cart.addItem(email, productData);
-                                    setIsLoading(false);
-                                }}
-                            >
-                                {isLoading ? (
-                                    <FaSpinner className="animate-spin mx-auto" />
-                                ) : (
-                                    "Add to Cart"
-                                )}
-                            </Button>
+                                            await cart.addItem(email, productData);
+                                            setIsLoading(false);
+                                        }}
+                                    >
+                                        {isLoading ? (
+                                            <FaSpinner className="animate-spin mx-auto" />
+                                        ) : (
+                                            "Add to Cart"
+                                        )}
+                                    </Button>
+                                </>
+                            )}
+
+                            {/* Return to Shop Button */}
                             <Button
                                 variant="secondary"
                                 onClick={() => router.push("/")}
@@ -189,6 +189,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                 Return to shop
                             </Button>
                         </div>
+
                     </div>
                 </div>
             </section>

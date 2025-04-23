@@ -25,13 +25,17 @@ export async function GET(req: Request) {
       ? searchParams.get("archived") === "true"
       : false;
     const minPrice = searchParams.get("minPrice");
-
     const maxPrice = searchParams.get("maxPrice");
 
     // Build filter object
-    const filter: Prisma.ProductWhereInput = {
-      isArchived: archived,
-    };
+    const filter: Prisma.ProductWhereInput = {};
+
+    // Only apply the archive filter if we're not querying by specific IDs
+    // This way, when using the `/api/products?id=${productIds}` endpoint, 
+    // we'll get both archived and non-archived products
+    if (!productIds.length) {
+      filter.isArchived = archived;
+    }
 
     // Filter products by IDs
     if (productIds.length) {
@@ -41,8 +45,16 @@ export async function GET(req: Request) {
     // Add relational filters
     if (brandId) filter.brandId = brandId;
     if (flavorId) filter.flavorId = flavorId;
-    if (puffsId) filter.puffsId = puffsId;
     if (nicotineId) filter.nicotineId = nicotineId;
+
+    // Add puffs filter through ProductPuffs relation
+    if (puffsId) {
+      filter.productPuffs = {
+        some: {
+          puffsId: puffsId,
+        },
+      };
+    }
 
     // Add price range filter
     if (minPrice || maxPrice) {
@@ -70,8 +82,12 @@ export async function GET(req: Request) {
         images: true,
         brand: true,
         flavor: true,
-        Puffs: true,
         Nicotine: true,
+        productPuffs: {
+          include: {
+            puffs: true,
+          },
+        },
       },
       skip,
       take: limit,
@@ -80,13 +96,22 @@ export async function GET(req: Request) {
       },
     });
 
+    // Transform the productPuffs data to a more usable format if needed
+    const transformedProducts = products.map((product) => ({
+      ...product,
+      puffs: product.productPuffs.map((pp) => ({
+        ...pp.puffs,
+        puffDesc: pp.puffDesc,
+      })),
+    }));
+
     // Get total count for pagination
     const totalCount = await prisma.product.count({
       where: filter,
     });
 
     return NextResponse.json({
-      products,
+      products: transformedProducts,
       totalCount,
       page,
       pageSize: limit,

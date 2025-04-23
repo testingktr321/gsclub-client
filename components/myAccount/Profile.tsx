@@ -31,7 +31,7 @@ const Profile = () => {
     <div className="w-full px-4 lg:px-2 py-4 flex lg:justify-center items-center gap-2 border-b border-gray-200">
       <div className="bg-red-200 w-[60px] md:w-[80px] rounded-full relative">
         <Image
-          src={userDetails?.image || "/avatar.png"}
+          src={userDetails?.image || "/images/avatar.png"}
           alt="user"
           width={500}
           height={500}

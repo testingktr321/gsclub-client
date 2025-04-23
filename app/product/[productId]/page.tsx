@@ -1,6 +1,7 @@
 import ProductPage from '@/components/ProductPage/ProductPage';
 import { prisma } from '@/lib/prisma';
 import { Product } from '@/types/product';
+import { notFound } from 'next/navigation';
 import React from 'react'
 
 type Props = {
@@ -9,27 +10,50 @@ type Props = {
 
 const page = async ({ params }: Props) => {
     const { productId } = await params;
-    const product = await prisma.product.findUnique({
-        where: {
-            id: productId
-        },
-        include: {
-            images: {
-                orderBy: {
-                    position: "asc",
+
+    try {
+        const product = await prisma.product.findUnique({
+            where: {
+                id: productId,
+            },
+            include: {
+                images: {
+                    orderBy: {
+                        position: "asc",
+                    },
+                },
+                brand: true,
+                flavor: true,
+                Nicotine: true,
+                productPuffs: {
+                    include: {
+                        puffs: true,
+                    },
+                    orderBy: {
+                        createdAt: 'asc',
+                    },
                 },
             },
-            brand: true,
-            flavor: true,
-            Puffs: true,
-            Nicotine: true,
-        },
-    })
+        });
 
-    console.log(product)
-    return (
-        <ProductPage product={product as Product} />
-    )
+        if (!product) {
+            return notFound();
+        }
+
+        const transformedProduct: Product = {
+            ...product,
+            puffs: product.productPuffs.map(pp => ({
+                ...pp.puffs,
+                description: pp.puffDesc,
+            })),
+        };
+
+        console.log('Product data:', transformedProduct);
+        return <ProductPage product={transformedProduct} />;
+    } catch (error) {
+        console.error('Failed to fetch product:', error);
+        return notFound();
+    }
 }
 
-export default page
+export default page;

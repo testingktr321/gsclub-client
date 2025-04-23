@@ -114,7 +114,7 @@ const Filter = () => {
                                 />
                             </button>
                             {openDropdown === 'brand' && (
-                                <div className="absolute z-10 mt-2 w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
+                                <div className="absolute z-10 mt-2 w-fit md:w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
                                     {filterOptions?.brands.map((brand) => (
                                         <div
                                             key={brand.id}
@@ -143,7 +143,7 @@ const Filter = () => {
                                 />
                             </button>
                             {openDropdown === 'flavor' && (
-                                <div className="absolute z-10 mt-2 w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
+                                <div className="absolute z-10 mt-2 w-fit md:w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
                                     {filterOptions?.flavors.map((flavor) => (
                                         <div
                                             key={flavor.id}
@@ -172,7 +172,7 @@ const Filter = () => {
                                 />
                             </button>
                             {openDropdown === 'puffs' && (
-                                <div className="absolute z-10 mt-2 w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
+                                <div className="absolute z-10 mt-2 w-fit md:w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
                                     {filterOptions?.puffs.map((puff) => (
                                         <div
                                             key={puff.id}
@@ -201,7 +201,7 @@ const Filter = () => {
                                 />
                             </button>
                             {openDropdown === 'nicotine' && (
-                                <div className="absolute z-10 mt-2 w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
+                                <div className="absolute z-10 mt-2 w-fit md:w-48 bg-black border border-gray-700 text-white rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
                                     {filterOptions?.nicotineLevels.map((level) => (
                                         <div
                                             key={level.id}
@@ -221,7 +221,7 @@ const Filter = () => {
                 {!loading && hasActiveFilters && (
                     <button
                         onClick={clearFilters}
-                        className="flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+                        className="flex items-center gap-1 px-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
                     >
                         <X size={16} />
                         Clear filters

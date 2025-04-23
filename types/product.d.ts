@@ -2,7 +2,7 @@ interface Image {
   id: string;
   url: string;
   position: number | null;
-  productId: string;
+  productId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,26 +35,46 @@ interface Nicotine {
   updatedAt: Date;
 }
 
+interface ProductPuffs {
+  id: string;
+  productId: string;
+  puffsId: string;
+  puffDesc: string;
+  createdAt: Date;
+  updatedAt: Date;
+  puffs: Puffs;
+}
+
 export interface Product {
   id: string;
   name: string;
-  eLiquidContent: string;
-  batteryCapacity: string;
-  coil: string;
-  firingMechanism: string;
-  type: string;
   currentPrice: number;
   originalPrice: number;
+  // Optional fields
+  eLiquidContent: string | null;
+  batteryCapacity: string | null;
+  coil: string | null;
+  firingMechanism: string | null;
+  type: string | null;
+  resistance: string | null;
+  powerRange: string | null;
+  charging: string | null;
+  extra: string | null;
+  // Relations
   isArchived: boolean;
-  brandId: string | null;
-  brand: Brand | null;
-  flavorId: string | null;
-  flavor: Flavor | null;
-  puffsId: string | null;
-  Puffs: Puffs | null;
-  nicotineId: string | null;
-  Nicotine: Nicotine | null;
+  brandId: string;
+  brand: Brand;
+  flavorId: string;
+  flavor: Flavor;
+  nicotineId: string;
+  Nicotine: Nicotine;
+  // Many-to-many relation through ProductPuffs
+  productPuffs: (ProductPuffs & { puffs: Puffs })[];
+  // Alternative flattened representation (optional)
+  puffs?: Array<Puffs & { description: string }>;
+  // Images
   images: Image[];
+  // Timestamps
   createdAt: Date;
   updatedAt: Date;
 }

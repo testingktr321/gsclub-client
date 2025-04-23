@@ -12,6 +12,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { Product } from "@/types/product";
 import { CartItem } from "@/types/cart";
 import { Button } from "../ui/button";
+import toast from "react-hot-toast";
 
 const CartPage = () => {
     const { data: session } = useSession();
@@ -103,6 +104,23 @@ const CartPage = () => {
     };
 
     const handleCheckout = () => {
+        // Check for out-of-stock products
+        const outOfStockItems = items.filter(item => {
+            const product = getProductDetails(item.id);
+            return product && product.isArchived;
+        });
+
+        if (outOfStockItems.length > 0) {
+            // Show toast message
+            toast.error(
+                "Please remove out-of-stock items from your cart before proceeding to checkout.",
+                { duration: 4000 }
+            );
+
+            return;
+        }
+
+        // If no out-of-stock items, proceed to checkout
         router.push("/checkout");
     };
 
@@ -238,7 +256,8 @@ const CartPage = () => {
                                                                     )}
                                                                     <div className="text-left">
                                                                         <p className="font-medium">
-                                                                            {product.name.charAt(0).toUpperCase() + product.name.slice(1)}
+                                                                            {product.brand.name} <br />
+                                                                            {product.name.charAt(0).toUpperCase() + product.name.slice(1)} <br />
                                                                         </p>
                                                                     </div>
                                                                     {product.isArchived && (

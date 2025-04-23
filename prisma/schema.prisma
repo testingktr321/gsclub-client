@@ -38,27 +38,68 @@ model Address {
 }
 
 model Product {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  eLiquidContent  String    @default("")
-  batteryCapacity String    @default("")
-  coil            String    @default("")
-  firingMechanism String    @default("")
-  type            String    @default("")
-  brand           Brand?    @relation(fields: [brandId], references: [id])
-  brandId         String?   @db.ObjectId
-  flavor          Flavor?   @relation(fields: [flavorId], references: [id])
-  flavorId        String?   @db.ObjectId
-  Puffs           Puffs?    @relation(fields: [puffsId], references: [id])
-  puffsId         String?   @db.ObjectId
-  Nicotine        Nicotine? @relation(fields: [nicotineId], references: [id])
-  nicotineId      String?   @db.ObjectId
-  images          Image[]
-  currentPrice    Float
-  originalPrice   Float
-  isArchived      Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  // Required fields 
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  currentPrice  Float
+  originalPrice Float
+  brandId       String @db.ObjectId
+  flavorId      String @db.ObjectId
+  nicotineId    String @db.ObjectId
+
+  // Optional fields 
+  eLiquidContent  String?
+  batteryCapacity String?
+  coil            String?
+  firingMechanism String?
+  type            String?
+  resistance      String?
+  powerRange      String?
+  charging        String?
+  extra           String?
+
+  // Relations
+  brand        Brand          @relation(fields: [brandId], references: [id])
+  flavor       Flavor         @relation(fields: [flavorId], references: [id])
+  Nicotine     Nicotine       @relation(fields: [nicotineId], references: [id])
+  images       Image[]
+  productPuffs ProductPuffs[]
+
+  // System fields
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Puffs {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  productPuffs ProductPuffs[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+// New intermediate model to handle the many-to-many relationship with description
+model ProductPuffs {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String   @db.ObjectId
+  puffs     Puffs    @relation(fields: [puffsId], references: [id])
+  puffsId   String   @db.ObjectId
+  puffDesc  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Create a compound unique constraint to prevent duplicate entries
+  @@unique([productId, puffsId])
+}
+
+model Nicotine {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Brand {
@@ -70,22 +111,6 @@ model Brand {
 }
 
 model Flavor {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-model Puffs {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-model Nicotine {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   products  Product[]
