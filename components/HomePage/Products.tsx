@@ -133,25 +133,26 @@ const Products = () => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="py-3 md:py-6 px-2 md:px-6 flex flex-col flex-grow justify-between">
-                                    <div className="">
+                                <div className="pt-3 pb-5 md:pb-5 px-2 md:px-4 flex flex-col flex-grow justify-between">
+                                    <div>
                                         <div className="flex items-center justify-center text-sm md:text-xl">
                                             <span className="">${product.currentPrice.toFixed(2)}</span>
                                             <span className="ml-2 text-sm md:text-base text-gray-500 line-through">
                                                 ${product.originalPrice.toFixed(2)}
                                             </span>
                                         </div>
-                                        <h3 className="font-semibold text-base md:text-2xl mt-1.5 md:mt-3 text-center line-clamp-2">
+                                        <h3 className="font-semibold text-base md:text-xl mt-1.5 md:mt-2.5 text-center line-clamp-2">
                                             {product.brand.name}
                                         </h3>
-                                        <h3 className="font-semibold text-base md:text-2xl text-center line-clamp-2 my-0.5 md:my-1 leading-5 md:leading-7">
+                                        <h3 className="font-semibold text-base md:text-xl text-center line-clamp-3 mt-0.5 md:mt-1 leading-5 md:leading-7">
                                             {product.name}
                                         </h3>
-                                        <h3 className="font-semibold text-base md:text-2xl text-center line-clamp-2">
+                                        {/* <h3 className="font-semibold text-base md:text-xl text-center line-clamp-2">
                                             {product.flavor.name}
-                                        </h3>
+                                        </h3> */}
                                     </div>
-                                    <div className='w-full mb-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
+                                    
+                                    <div className='w-full mb-1.5 -mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
                                         <div>
                                             <span className="w-full underline">
                                                 View product

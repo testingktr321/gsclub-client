@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await sendEmail(email, "Welcome to GetSmoke!", signupTemplate(name));
+    await sendEmail(email, "Welcome to Itip Convenience Store!", signupTemplate(name));
 
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {

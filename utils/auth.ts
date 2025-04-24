@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/mail";
+import { signupTemplate } from "@/emails/signupTemplate";
 
 // Extend the default session user type
 declare module "next-auth" {
@@ -113,7 +115,7 @@ export const authOptions: AuthOptions = {
           });
 
           if (!existingUser) {
-            // Create new user if they don't exist (not ordered as guest)
+            // Create new user if they don't exist (completely new user)
             await prisma.user.create({
               data: {
                 email: user.email!,
@@ -121,6 +123,13 @@ export const authOptions: AuthOptions = {
                 image: user.image,
               },
             });
+
+            // Send welcome email for brand new Google users
+            await sendEmail(
+              user.email!,
+              "Welcome to Itip Convenience Store!",
+              signupTemplate(user.name ?? user.email!)
+            );
           } else if (
             existingUser.name === "Guest User" ||
             !existingUser.image

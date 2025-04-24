@@ -48,7 +48,6 @@ const page = async ({ params }: Props) => {
             })),
         };
 
-        console.log('Product data:', transformedProduct);
         return <ProductPage product={transformedProduct} />;
     } catch (error) {
         console.error('Failed to fetch product:', error);
