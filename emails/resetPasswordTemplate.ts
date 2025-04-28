@@ -21,7 +21,6 @@ export const resetPasswordTemplate = (name: string, resetLink: string) => `
         .title {
             font-size: 24px;
             font-weight: bold;
-            text-transform: uppercase;
             color: #222;
             margin: 20px 0;
         }
@@ -49,17 +48,17 @@ export const resetPasswordTemplate = (name: string, resetLink: string) => `
 </head>
 <body>
     <div class="container">
-        <h2 class="title">Password Reset Request</h2>
+        <h2 class="title">Reset Your Password</h2>
         <p class="message">
-            Hi <strong>${name}</strong>,<br><br>
-            We received a request to reset your password. Click the button below to reset it. If you did not request this, you can ignore this email.<br><br>
+            Hello ${name},<br><br>
+            We received a request to reset your account password. To proceed, please click the button below:<br><br>
             <a href="${resetLink}" class="button">Reset Password</a><br><br>
-            This link will expire in 1 hour.
+            This link is valid for 1 hour. If you did not request a password reset, you can safely ignore this email.
         </p>
-        <p class="footer">
-            If you have any issues, contact our support team.<br>
-            <strong>Itip Convenience Store Team 🚀</strong>
-        </p>
+        <div class="footer">
+            If you need further assistance, please contact our support team.<br><br>
+            &copy; ${new Date().getFullYear()} Itip Convenience Store. All rights reserved.
+        </div>
     </div>
 </body>
 </html>

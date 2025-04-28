@@ -2,7 +2,7 @@ export const signupTemplate = (name: string) => `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome!</title>
+    <title>Welcome to Itip Convenience Store</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,20 +21,14 @@ export const signupTemplate = (name: string) => `
         .title {
             font-size: 24px;
             font-weight: bold;
-            text-transform: uppercase;
-            color: #222;
-            margin: 20px 0;
-        }
-        .logo {
-            font-size: 32px;
             color: #222;
             margin: 20px 0;
         }
         .subtitle {
             font-size: 18px;
-            text-transform: uppercase;
             margin-bottom: 20px;
             font-weight: bold;
+            color: #555;
         }
         .message {
             font-size: 16px;
@@ -50,13 +44,19 @@ export const signupTemplate = (name: string) => `
 </head>
 <body>
     <div class="container">
-        <p class="subtitle"><strong>Best deals for your vaping experience</strong></p>
+        <p class="title">Welcome, ${name}</p>
+        <p class="subtitle">Thank you for joining Itip Convenience Store</p>
         <p class="message">
-            Hi <strong>${name}</strong>,<br><br>
-            We're thrilled to have you on board at <strong>Itip Convenience Store</strong>! Explore our latest vaping products, exclusive deals, and premium flavors curated just for you.<br><br>
-            Enjoy your experience with us!<br>
-            <strong>Happy Vaping! 🚀</strong>
+            Hello ${name},<br><br>
+            We're excited to have you as part of our community.<br>
+            At Itip Convenience Store, we offer a range of lifestyle products for your needs.<br><br>
+            Feel free to explore our latest collections and updates by visiting our website.<br><br>
+            If you have any questions or need assistance, our support team is here to help.<br><br>
+            Thank you for choosing us.
         </p>
+        <div class="footer">
+            &copy; ${new Date().getFullYear()} Itip Convenience Store. All rights reserved.
+        </div>
     </div>
 </body>
 </html>

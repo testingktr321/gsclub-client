@@ -32,6 +32,7 @@ interface CollectJSFieldConfig {
   placeholder: string;
 }
 
+
 interface CollectJSConfig {
   paymentSelector: string;
   variant: string;
@@ -159,6 +160,7 @@ const CheckoutPage = () => {
           placeholder: "***",
         }
       },
+
       customCss: {
         'border-radius': '0.375rem',
         'padding': '0.75rem',
@@ -384,7 +386,7 @@ const CheckoutPage = () => {
         // Payment failed
         setPaymentError(data.message || "Payment failed. Please try again.");
         toast.error(data.message || "Payment failed. Please try again.");
-        router.push(`/checkout/failure`);
+        // router.push(`/checkout/failure`);
       }
     } catch (error) {
       console.error("Payment error:", error);

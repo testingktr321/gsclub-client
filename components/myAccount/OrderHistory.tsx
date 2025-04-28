@@ -1,47 +1,45 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import ShippingAddress from "./ShippingAddress";
-// import PaymentMethod from "./PaymentMethod";
 import Logout from "./Logout";
 import Settings from "./Settings";
-// import axios from "axios";
-// import toast from "react-hot-toast";
-// import SubscriptionPopUp from "./SubscriptionPopUp";
-// import OrderHistoryPopUp from "./OrderHistoryPopUp";
+import { Order } from "@/types/order";
+import OrderHistoryPopUp from "./OrderHistoryPopUp";
 
 interface OrderHistoryProps {
   selectOpt: string;
-  // orders: Order[];
+  orders: Order[];
 }
 
-const OrderHistory = ({ selectOpt }: OrderHistoryProps) => {
-  // console.log("ordeersssssss???>>>>", orders);
-
-  // const [orderDetails, setOrderDetails] = useState(false);
-  // const [subscribeDetails, setSubscribeDetails] = useState(false);
-  // const [singleOrderDetails, setSingleOrderDetails] = useState<Order>();
-
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-  // console.log("orders details",orders)
-
-  // console.log("singleOrderDetails ", singleOrderDetails)
-
-  // console.log("total Quantity",totalQuantity)
+const OrderHistory = ({ selectOpt, orders }: OrderHistoryProps) => {
+  const [orderDetails, setOrderDetails] = useState(false);
+  const [singleOrderDetails, setSingleOrderDetails] = useState<Order>();
 
   // -------------------function for date format---------------------
-  // const DateFormatted = (date: string) => {
-  //   const newDate = new Date(date);
+  const DateFormatted = (date: string) => {
+    const newDate = new Date(date);
 
-  //   const day = newDate.getUTCDate();
-  //   const month = newDate.toLocaleString("default", { month: "short" });
-  //   const year = newDate.getUTCFullYear();
+    const day = newDate.getUTCDate();
+    const month = newDate.toLocaleString("default", { month: "short" });
+    const year = newDate.getUTCFullYear();
 
-  //   const formattedDate = `${day} ${month}, ${year}`;
+    const formattedDate = `${day} ${month}, ${year}`;
 
-  //   return formattedDate;
-  // };
+    return formattedDate;
+  };
+
+  // order details function
+  const detailsForSingleProduct = (id: string) => {
+    setOrderDetails(true);
+
+    const allData = orders.find((order) => order.id === id);
+
+    if (allData) {
+      setSingleOrderDetails(allData);
+    } else {
+      console.error("Order not found with ID:", id);
+    }
+  };
 
   return (
     <div>
@@ -60,16 +58,16 @@ const OrderHistory = ({ selectOpt }: OrderHistoryProps) => {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {/* {orders.map((order) => (
+                  {orders.map((order) => (
                     <tr key={order.id}>
-                      <td className="border-b px-6 py-2 font-bold">
+                      <td className="border-b border-gray-300 px-6 py-2 font-semibold">
                         #{order.id}
                       </td>
-                      <td className="border-b p-2">
+                      <td className="border-b border-gray-300 p-2">
                         {DateFormatted(order.createdAt.toString())}
                       </td>
-                      <td className="border-b p-2">
-                        ${order.total.toFixed(2)}(
+                      <td className="border-b border-gray-300 p-2">
+                        ${order.totalAmount.toFixed(2)}(
                         {order.orderItems.reduce(
                           (total, item) => total + item.quantity,
                           0
@@ -78,30 +76,29 @@ const OrderHistory = ({ selectOpt }: OrderHistoryProps) => {
                       </td>
                       <td
                         onClick={() => detailsForSingleProduct(order.id)}
-                        className="border-b p-2 text-green hover:underline cursor-pointer"
+                        className="border-b border-gray-300 p-2 text-green hover:underline cursor-pointer"
                       >
                         View Details
                       </td>
                     </tr>
-                  ))} */}
+                  ))}
                 </tbody>
               </table>
             </div>
 
             {/* animation popUp of  order details  */}
-            {/* <OrderHistoryPopUp
+            <OrderHistoryPopUp
               orderDetails={orderDetails}
               singleOrderDetails={singleOrderDetails}
               setOrderDetails={setOrderDetails}
               DateFormatted={DateFormatted}
-            /> */}
+            />
           </div>
         )}
 
         {selectOpt == "Shipping addresses" && (
           <ShippingAddress ischeckoutPage={false} />
         )}
-        {/* {selectOpt == "Payment method" && <PaymentMethod />} */}
         {selectOpt == "Settings" && <Settings />}
         {selectOpt == "Log-out" && <Logout />}
       </div>

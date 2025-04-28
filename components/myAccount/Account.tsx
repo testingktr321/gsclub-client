@@ -8,11 +8,11 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-// import { Order } from "@/types/order";
 import { TfiLayoutListThumb } from "react-icons/tfi";
 import { MdOutlinePinDrop } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineLogout } from "react-icons/md";
+import { Order } from "@/types/order";
 
 const filterOfAccounts = [
   { id: 1, title: 'My orders', logo: <TfiLayoutListThumb /> },
@@ -21,12 +21,11 @@ const filterOfAccounts = [
   { id: 6, title: 'Log-out', logo: <MdOutlineLogout /> },
 ]
 
-// interface AccountProps {
-//   // orders: Order[];
-// }
+interface AccountProps {
+  orders: Order[];
+}
 
-const Account = ({ }) => {
-  // const Account: React.FC<AccountProps> = ({ }) => {
+const Account: React.FC<AccountProps> = ({ orders }) => {
   const [selectOpt, setSelectOpt] = useState<string>("My orders");
   const [addressCount, setAddressCount] = useState(0);
   const { status, data: session } = useSession();
@@ -74,8 +73,7 @@ const Account = ({ }) => {
           />
         </div>
         <div className="w-3/4 h-[90vh]  border border-gray-200 rounded-lg">
-          {/* <OrderHistory selectOpt={selectOpt} orders={orders} /> */}
-          <OrderHistory selectOpt={selectOpt} />
+          <OrderHistory selectOpt={selectOpt} orders={orders} />
         </div>
       </div>
 
