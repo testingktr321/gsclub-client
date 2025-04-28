@@ -24,6 +24,7 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   Address          Address[]
+  Order            Order[]
 }
 
 model Address {
@@ -66,9 +67,10 @@ model Product {
   productPuffs ProductPuffs[]
 
   // System fields
-  isArchived Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isArchived Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  OrderItem  OrderItem[]
 }
 
 model Puffs {
@@ -136,4 +138,56 @@ model Cart {
   items     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id                    String      @id @default(auto()) @map("_id") @db.ObjectId
+  userEmail             String
+  user                  User        @relation(fields: [userEmail], references: [email])
+  orderItems            OrderItem[]
+  isPaid                Boolean     @default(false)
+  isDelivered           Boolean     @default(false)
+  phone                 String      @default("")
+  // Address snapshot
+  shippingName          String
+  shippingStreetAddress String
+  shippingState         String
+  shippingCity          String
+  shippingZipCode       String
+  totalAmount           Float // Total amount of the order plus shipping amount
+  shippingAmount        String?
+  Shipment              Shipment?
+  shippingRateId        String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+}
+
+model OrderItem {
+  id              String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderId         String  @db.ObjectId
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  quantity        Int
+  productId       String  @db.ObjectId // Reference to original product
+  product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  // Product snapshot at purchase time
+  productSnapshot Json // Stores product data as it existed when purchased
+  purchasePrice   Float // Explicitly store the price at time of purchase
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Shipment {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  order               Order?   @relation(fields: [orderId], references: [id])
+  orderId             String   @unique @db.ObjectId
+  shippoShipmentId    String   @unique // ID from Shippo /shipments API
+  shippoTransactionId String?
+  carrier             String // e.g., "FedEx", "UPS"
+  trackingNumber      String? // Tracking number after label purchase
+  trackingUrl         String? // URL to track the shipment
+  labelUrl            String? // URL to download the shipping label
+  status              String   @default("pending") // "pending", "label_purchased", "shipped", "delivered"
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
