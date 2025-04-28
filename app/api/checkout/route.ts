@@ -165,8 +165,15 @@ export async function POST(req: NextRequest) {
       order_id: order.id,
       shipping: shippingCost.toFixed(2),
       type: "sale",
+      // Add billing address information (using shipping address as billing)
+      firstname: shippingName.split(" ")[0], // Assuming the first part is the first name
+      lastname: shippingName.split(" ").slice(1).join(" "), // Assuming the rest is the last name
+      address1: shippingStreetAddress,
+      city: shippingCity,
+      state: shippingState,
+      zip: shippingZipCode,
+      country: "US",
     };
-
     // Make the API request to NMI
     const response = await fetch("https://secure.nmi.com/api/transact.php", {
       method: "POST",
@@ -198,12 +205,12 @@ export async function POST(req: NextRequest) {
       );
     } else {
       // Payment failed - keep order in database for reference but mark as failed
+      console.error("NMI Error:", responseData);
       return NextResponse.json(
         {
           success: false,
-          orderId: order.id,
-          errorCode: responseData.response_code,
-          message: responseData.responsetext,
+          message: responseData.responsetext || "Payment processing error",
+          errorDetails: responseData, // Include full error details for debugging
         },
         { status: 400 }
       );

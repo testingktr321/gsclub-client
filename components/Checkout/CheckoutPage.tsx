@@ -32,7 +32,6 @@ interface CollectJSFieldConfig {
   placeholder: string;
 }
 
-
 interface CollectJSConfig {
   paymentSelector: string;
   variant: string;
@@ -160,7 +159,7 @@ const CheckoutPage = () => {
           placeholder: "***",
         }
       },
-
+      
       customCss: {
         'border-radius': '0.375rem',
         'padding': '0.75rem',
