@@ -71,6 +71,9 @@ model Product {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   OrderItem  OrderItem[]
+
+  //new feild 
+  redirectLink String?
 }
 
 model Puffs {

@@ -1,12 +1,12 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
-import { Button } from '../ui/button';
+// import { Button } from '../ui/button';
 import Link from 'next/link';
 import ProductShimmer from './ProductShimmer';
-import { useSession } from 'next-auth/react';
-import useCart from '@/hooks/useCart';
-import { FaSpinner } from 'react-icons/fa';
+// import { useSession } from 'next-auth/react';
+// import useCart from '@/hooks/useCart';
+// import { FaSpinner } from 'react-icons/fa';
 import { useFilter } from '@/hooks/useFilter';
 import { Product } from '@/types/product';
 
@@ -20,13 +20,13 @@ interface ApiResponse {
 }
 
 const Products = () => {
-    const { data: session } = useSession();
-    const email = session?.user.email || "";
-    const cart = useCart();
+    // const { data: session } = useSession();
+    // const email = session?.user.email || "";
+    // const cart = useCart();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [loadingProducts, setLoadingProducts] = useState<Record<string, boolean>>({});
+    // const [loadingProducts, setLoadingProducts] = useState<Record<string, boolean>>({});
 
     const { brandId, flavorId, puffsId, nicotineId } = useFilter();
 
@@ -66,27 +66,27 @@ const Products = () => {
         fetchProducts();
     }, [brandId, flavorId, puffsId, nicotineId]);
 
-    const handleAddToCart = async (productId: string, event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        event.preventDefault();
+    // const handleAddToCart = async (productId: string, event: React.MouseEvent<HTMLButtonElement>) => {
+    //     event.stopPropagation();
+    //     event.preventDefault();
 
-        // Set loading state for this specific product
-        setLoadingProducts(prev => ({ ...prev, [productId]: true }));
+    //     // Set loading state for this specific product
+    //     setLoadingProducts(prev => ({ ...prev, [productId]: true }));
 
-        const productData = {
-            id: productId,
-            quantity: 1,
-        };
+    //     const productData = {
+    //         id: productId,
+    //         quantity: 1,
+    //     };
 
-        try {
-            await cart.addItem(email, productData);
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-        } finally {
-            // Clear loading state for this specific product
-            setLoadingProducts(prev => ({ ...prev, [productId]: false }));
-        }
-    };
+    //     try {
+    //         await cart.addItem(email, productData);
+    //     } catch (error) {
+    //         console.error('Error adding to cart:', error);
+    //     } finally {
+    //         // Clear loading state for this specific product
+    //         setLoadingProducts(prev => ({ ...prev, [productId]: false }));
+    //     }
+    // };
 
     if (loading) {
         return <ProductShimmer />;
@@ -158,7 +158,7 @@ const Products = () => {
                                                 View product
                                             </span>
                                         </div>
-                                        <Button
+                                        {/* <Button
                                             type="submit"
                                             disabled={loadingProducts[product.id]}
                                             onClick={(event) => handleAddToCart(product.id, event)}
@@ -168,7 +168,7 @@ const Products = () => {
                                             ) : (
                                                 "Add to Cart"
                                             )}
-                                        </Button>
+                                        </Button> */}
                                     </div>
                                 </div>
                             </div>

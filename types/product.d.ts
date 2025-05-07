@@ -77,4 +77,5 @@ export interface Product {
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
+  redirectLink: string | null;
 }

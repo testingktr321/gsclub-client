@@ -1,34 +1,35 @@
 "use client";
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '../ui/button';
-import { FaMinus, FaPlus, FaSpinner } from 'react-icons/fa';
-import { useSession } from 'next-auth/react';
-import useCart from '@/hooks/useCart';
+// import { FaMinus, FaPlus, FaSpinner } from 'react-icons/fa';
+// import { useSession } from 'next-auth/react';
+// import useCart from '@/hooks/useCart';
 import { Product } from '@/types/product';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface SingleProductProps {
     product: Product | null;
 }
 
 const ProductPage = ({ product }: SingleProductProps) => {
-    const { data: session } = useSession();
-    const email = session?.user.email || "";
-    const cart = useCart();
-    const [quantity, setQuantity] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
+    // const { data: session } = useSession();
+    // const email = session?.user.email || "";
+    // const cart = useCart();
+    // const [quantity, setQuantity] = useState(1);
+    // const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const handleIncrement = () => {
-        setQuantity((prev) => prev + 1);
-    };
+    // const handleIncrement = () => {
+    //     setQuantity((prev) => prev + 1);
+    // };
 
-    const handleDecrement = () => {
-        if (quantity > 1) {
-            setQuantity((prev) => prev - 1);
-        }
-    };
+    // const handleDecrement = () => {
+    //     if (quantity > 1) {
+    //         setQuantity((prev) => prev - 1);
+    //     }
+    // };
 
     if (!product) {
         return <div className="flex justify-center items-center min-h-screen">
@@ -142,7 +143,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                             ) : (
                                 <>
                                     {/* Quantity Selector */}
-                                    <div className="border border-slate-300 px-4 py-2 rounded-full flex items-center justify-between gap-6 w-full lg:w-fit">
+                                    {/* <div className="border border-slate-300 px-4 py-2 rounded-full flex items-center justify-between gap-6 w-full lg:w-fit">
                                         <span className="cursor-pointer" onClick={handleDecrement}>
                                             <FaMinus />
                                         </span>
@@ -150,10 +151,10 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                         <span className="cursor-pointer" onClick={handleIncrement}>
                                             <FaPlus />
                                         </span>
-                                    </div>
+                                    </div> */}
 
                                     {/* Add to Cart Button */}
-                                    <Button
+                                    {/* <Button
                                         type="submit"
                                         variant="primary"
                                         className="px-8 w-full"
@@ -176,7 +177,37 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                         ) : (
                                             "Add to Cart"
                                         )}
-                                    </Button>
+                                    </Button> */}
+                                    {product?.redirectLink && (
+                                        <Button
+                                            type="submit"
+                                            variant="primary"
+                                            className="px-8 w-full"
+                                            // disabled={isLoading}
+                                        // onClick={async (event: React.MouseEvent<HTMLButtonElement>) => {
+                                        //     event.stopPropagation();
+                                        //     setIsLoading(true);
+
+                                        //     const productData = {
+                                        //         id: product.id,
+                                        //         quantity,
+                                        //     };
+
+                                        //     await cart.addItem(email, productData);
+                                        //     setIsLoading(false);
+                                        // }}
+                                        >
+                                            {/* {isLoading ? (
+                                            <FaSpinner className="animate-spin mx-auto" />
+                                        ) : (
+                                            "Add to Cart"
+                                        )} */}
+                                            <Link href={product?.redirectLink || ""}>
+                                                Redirect to Gs CLub
+                                            </Link>
+                                        </Button>
+                                    )}
+
                                 </>
                             )}
 
