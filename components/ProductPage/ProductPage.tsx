@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 import { Product } from '@/types/product';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import RelatedPRoduct from './RelatedPRoduct';
 
 interface SingleProductProps {
     product: Product | null;
@@ -183,7 +184,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                             type="submit"
                                             variant="primary"
                                             className="px-8 w-full"
-                                            // disabled={isLoading}
+                                        // disabled={isLoading}
                                         // onClick={async (event: React.MouseEvent<HTMLButtonElement>) => {
                                         //     event.stopPropagation();
                                         //     setIsLoading(true);
@@ -223,6 +224,13 @@ const ProductPage = ({ product }: SingleProductProps) => {
 
                     </div>
                 </div>
+
+
+            </section>
+
+            <section className=''>
+                {/* Related Product */}
+                <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} />
             </section>
         </main>
     );
