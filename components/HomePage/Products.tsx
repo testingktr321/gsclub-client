@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
-// import { Button } from '../ui/button';
+import { Button } from '../ui/button';
 import Link from 'next/link';
 import ProductShimmer from './ProductShimmer';
 // import { useSession } from 'next-auth/react';
@@ -151,24 +151,29 @@ const Products = () => {
                                             {product.flavor.name}
                                         </h3> */}
                                     </div>
-                                    
+
                                     <div className='w-full mb-1.5 -mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
                                         <div>
                                             <span className="w-full underline">
                                                 View product
                                             </span>
                                         </div>
-                                        {/* <Button
-                                            type="submit"
-                                            disabled={loadingProducts[product.id]}
-                                            onClick={(event) => handleAddToCart(product.id, event)}
-                                        >
-                                            {loadingProducts[product.id] ? (
+                                        {product?.redirectLink && (
+                                            <Button
+                                                type="submit"
+                                            // disabled={loadingProducts[product.id]}
+                                            // onClick={(event) => handleAddToCart(product.id, event)}
+                                            >
+                                                {/* {loadingProducts[product.id] ? (
                                                 <FaSpinner className="animate-spin mx-auto" />
                                             ) : (
                                                 "Add to Cart"
-                                            )}
-                                        </Button> */}
+                                            )} */}
+                                                <Link href={product?.redirectLink || ""}>
+                                                    Redirect to Gs CLub
+                                                </Link>
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

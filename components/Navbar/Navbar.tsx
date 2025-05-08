@@ -280,7 +280,7 @@ const Navbar = () => {
 
                                 {/* Search Results Dropdown */}
                                 {showResults && (
-                                    <div className="absolute z-50 top-full -left-10 md:left-0 w-[92vw] md:w-96 mt-2 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-y-auto">
+                                    <div className="absolute z-50 top-full -left-10 lg:left-0 w-[92vw] lg:w-[60vw] xl:w-[40vw] mt-2 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-y-auto">
                                         {isLoading ? (
                                             <div className="flex justify-center items-center p-4">
                                                 <div className="w-5 h-5 border-t-2 border-b-2 border-[#8C14AC] rounded-full animate-spin"></div>

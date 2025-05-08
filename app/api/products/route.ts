@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     const filter: Prisma.ProductWhereInput = {};
 
     // Only apply the archive filter if we're not querying by specific IDs
-    // This way, when using the `/api/products?id=${productIds}` endpoint, 
+    // This way, when using the `/api/products?id=${productIds}` endpoint,
     // we'll get both archived and non-archived products
     if (!productIds.length) {
       filter.isArchived = archived;
@@ -73,6 +73,50 @@ export async function GET(req: Request) {
         { firingMechanism: { contains: search, mode: "insensitive" } },
         { type: { contains: search, mode: "insensitive" } },
       ];
+    }
+
+    // Add flavor filter with AND logic for multiple words
+    // Updated flavor filtering logic that handles the edge case
+    if (flavorId) {
+      // First get the flavor name from the database
+      const flavor = await prisma.flavor.findUnique({
+        where: { id: flavorId },
+        select: { name: true },
+      });
+
+      if (flavor) {
+        // Remove the simple flavorId filter
+        delete filter.flavorId;
+
+        // Split the flavor name into words
+        const flavorWords = flavor.name
+          .split(" ")
+          .filter((word) => word.length > 0);
+
+        if (flavorWords.length === 1) {
+          // For single-word flavors, use a more precise matching approach
+          // to prevent partial word matches (like "grape" matching "grapefruit")
+          filter.flavor = {
+            OR: [
+              // Match exact flavor name (case insensitive)
+              { name: { equals: flavor.name, mode: "insensitive" } },
+              // Match flavor name followed by a space and other words
+              { name: { startsWith: `${flavor.name} `, mode: "insensitive" } },
+              // Match flavor name with a space before it and possibly more text after
+              { name: { contains: ` ${flavor.name} `, mode: "insensitive" } },
+              // Match flavor name with a space before it and nothing after
+              { name: { endsWith: ` ${flavor.name}`, mode: "insensitive" } },
+            ],
+          };
+        } else {
+          // For multi-word flavors, keep the existing approach that works well
+          filter.flavor = {
+            AND: flavorWords.map((word) => ({
+              name: { contains: word, mode: "insensitive" },
+            })),
+          };
+        }
+      }
     }
 
     // Query products with pagination and filters

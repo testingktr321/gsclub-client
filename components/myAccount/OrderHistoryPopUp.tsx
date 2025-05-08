@@ -4,6 +4,11 @@ import { AnimatePresence } from "framer-motion";
 import { IoClose } from "react-icons/io5";
 import { Order } from "@/types/order";
 import Image from "next/image";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import CustomStepIcon from "./CustomStepIcon";
+import Box from "@mui/material/Box";
 
 interface allDataProps {
   orderDetails: boolean;
@@ -24,15 +29,15 @@ const OrderHistoryPopUp = ({
     exit: { opacity: 0, scale: 0.8 },
   };
 
-  // const steps = ["Order received", "Processing", "On the way", "Delivered"];
-  // const statusMap = {
-  //   pending: 0,
-  //   label_purchased: 1,
-  //   shipped: 2,
-  //   delivered: 3,
-  // };
-  // const shipmentStatus = singleOrderDetails?.Shipment?.status || "pending";
-  // const activeStep = statusMap[shipmentStatus];
+  const steps = ["Order received", "Processing", "On the way", "Delivered"];
+  const statusMap = {
+    pending: 0,
+    label_purchased: 1,
+    shipped: 2,
+    delivered: 3,
+  };
+  const shipmentStatus = singleOrderDetails?.Shipment?.status || "pending";
+  const activeStep = statusMap[shipmentStatus];
 
   return (
     <AnimatePresence>
@@ -90,7 +95,7 @@ const OrderHistoryPopUp = ({
 
             <div className="flex lg:flex-row flex-col lg:justify-between gap-4">
               {/*---- Product Details ----------*/}
-              <div className="lg:w-[50%] w-full h-fit lg:h-[40vh] scrollbar-thin overflow-y-scroll">
+              <div className="lg:w-[50%] w-full h-[25vh] lg:h-[40vh] scrollbar-thin overflow-y-scroll pr-2">
                 {singleOrderDetails?.orderItems.map((item, index) => (
                   <div className="mt-2" key={index}>
                     <div className="flex items-center gap-4 font-plusSans w-full">
@@ -130,7 +135,7 @@ const OrderHistoryPopUp = ({
               {/*---- Address ----*/}
               <div className="lg:w-[50%] w-full h-fit lg:h-[40vh] scrollbar-thin overflow-y-scroll p-2">
                 <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mt-2">
-                  <h3 className="font-bold">Address</h3>
+                  <h3 className="font-medium">Address</h3>
                   <p className="text-gray-500">
                     {singleOrderDetails?.shippingName}
                   </p>
@@ -143,6 +148,34 @@ const OrderHistoryPopUp = ({
                 </div>
               </div>
             </div>
+
+            {/* -----Shipment status----- */}
+            {singleOrderDetails?.isPaid && (
+              <div className="shadow border border-gray-200 rounded-lg p-4 lg:mt-4 bg-white">
+                <h3 className="text-[1.2rem] font-medium mb-4">Order Status</h3>
+                <Box sx={{ width: "100%" }}>
+                  <Stepper activeStep={activeStep} alternativeLabel>
+                    {steps.map((label, index) => (
+                      <Step key={label}>
+                        <StepLabel
+                          StepIconComponent={CustomStepIcon}
+                          sx={{
+                            "& .MuiStepLabel-label": {
+                              color:
+                                index <= activeStep ? "#4caf50" : "#757575",
+                              fontWeight:
+                                index === activeStep ? "bold" : "normal",
+                            },
+                          }}
+                        >
+                          {label}
+                        </StepLabel>
+                      </Step>
+                    ))}
+                  </Stepper>
+                </Box>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

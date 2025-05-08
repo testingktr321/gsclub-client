@@ -98,7 +98,7 @@ const Account: React.FC<AccountProps> = ({ orders }) => {
         <Link href={"/my-account/orders"} className="border border-gray-100 flex items-center justify-between p-4 shadow-md bg-white rounded-lg gap-4 my-4">
           <div>
             <h3 className=" font-bold text-[1.1rem] ">My orders</h3>
-            {/* <p className=" text-[0.9rem] text-[#8E8E93]">You have {orders.length} orders</p> */}
+            <p className=" text-[0.9rem] text-[#8E8E93]">You have {orders.length} orders</p>
           </div>
           <span className=" text-[1.2rem]">
             <IoIosArrowForward />
