@@ -27,7 +27,7 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                let url = '/api/products';
+                let url = '/api/products/related-products';
 
                 // Add filter parameters if they exist
                 const params = new URLSearchParams();
