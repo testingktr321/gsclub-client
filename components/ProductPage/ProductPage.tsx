@@ -204,7 +204,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                             "Add to Cart"
                                         )} */}
                                             <Link href={product?.redirectLink || ""}>
-                                                Redirect to Gs CLub
+                                                Shop on GetSmoke
                                             </Link>
                                         </Button>
                                     )}

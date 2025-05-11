@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { Suspense } from "react";
 import AgeVerification from "@/components/AgeVerification/AgeVerification";
+import ScrollToTopButton from "@/components/ScrollToTopButton/ScrollToTopButton";
 
 const unbounded = Unbounded({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({
               {children}
             </Suspense>
           </div>
+          <ScrollToTopButton />
           <Footer />
         </Providers>
       </body>
