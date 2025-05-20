@@ -15,7 +15,7 @@ interface ApiResponse {
 
 interface RelatedProductProps {
     brandId: string;
-    flavorId: string
+    flavorId?: string
 }
 
 const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {

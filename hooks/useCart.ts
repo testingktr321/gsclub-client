@@ -11,10 +11,23 @@ interface CartStore {
   initializeCart: (email: string) => Promise<boolean>;
   loadCart: (email: string) => Promise<boolean>;
   addItem: (email: string | null, item: CartItem) => Promise<boolean>;
-  removeItem: (email: string | null, id: string) => Promise<boolean>;
+  addItems: (email: string | null, item: CartItem[]) => Promise<boolean>;
+  removeItem: (
+    email: string | null,
+    id: string,
+    attributeId?: string | null
+  ) => Promise<boolean>;
   clearCart: (email: string | null) => Promise<boolean>;
-  incrementQuantity: (email: string | null, id: string) => Promise<boolean>;
-  decrementQuantity: (email: string | null, id: string) => Promise<boolean>;
+  incrementQuantity: (
+    email: string | null,
+    id: string,
+    attributeId?: string | null
+  ) => Promise<boolean>;
+  decrementQuantity: (
+    email: string | null,
+    id: string,
+    attributeId?: string | null
+  ) => Promise<boolean>;
   syncCart: (email: string, items: CartItem[]) => Promise<boolean>;
 }
 
@@ -59,17 +72,27 @@ const useCart = create<CartStore>((set, get) => ({
     set({ loading: true });
 
     // Check if the item already exists in the cart
-    const existingItem = currentItems.find((i) => i.id === item.id);
+    // Now we consider both id AND attributeId (if it exists) for uniqueness
+    const existingItem = currentItems.find(
+      (i) =>
+        i.id === item.id &&
+        (i.attributeId === item.attributeId ||
+          (!i.attributeId && !item.attributeId))
+    );
 
     let updatedItems;
 
     if (existingItem) {
-      // If the item exists, update its quantity by adding the new quantity
+      // If the item exists with the same id and attributeId, update its quantity
       updatedItems = currentItems.map((i) =>
-        i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
+        i.id === item.id &&
+        (i.attributeId === item.attributeId ||
+          (!i.attributeId && !item.attributeId))
+          ? { ...i, quantity: i.quantity + item.quantity }
+          : i
       );
     } else {
-      // If the item doesn't exist, add it to the cart
+      // If the item doesn't exist or has a different attributeId, add it as a new item
       updatedItems = [...currentItems, item];
     }
 
@@ -103,13 +126,87 @@ const useCart = create<CartStore>((set, get) => ({
     return false;
   },
 
+  // Add a new function to your cart hook for batch adding items
+  async addItems(email, items) {
+    const { items: currentItems, loading } = get();
+    if (loading) return false;
+
+    set({ loading: true });
+
+    let updatedItems = [...currentItems];
+
+    // Process each item and update the cart items array
+    for (const item of items) {
+      // Check if the item already exists in the cart
+      const existingItem = updatedItems.find(
+        (i) =>
+          i.id === item.id &&
+          (i.attributeId === item.attributeId ||
+            (!i.attributeId && !item.attributeId))
+      );
+
+      if (existingItem) {
+        // If the item exists with the same id and attributeId, update its quantity
+        updatedItems = updatedItems.map((i) =>
+          i.id === item.id &&
+          (i.attributeId === item.attributeId ||
+            (!i.attributeId && !item.attributeId))
+            ? { ...i, quantity: i.quantity + item.quantity }
+            : i
+        );
+      } else {
+        // If the item doesn't exist or has a different attributeId, add it as a new item
+        updatedItems = [...updatedItems, item];
+      }
+    }
+
+    if (email) {
+      try {
+        // Update the cart on the server with all items at once
+        const response = await axios.patch(`/api/cart/${email}`, {
+          items: updatedItems,
+        });
+
+        if (response.status === 200) {
+          set({ items: updatedItems });
+          toast.success("Items added to cart");
+          set({ loading: false });
+          return true;
+        }
+      } catch (error) {
+        console.error("Error adding items to cart:", error);
+        toast.error("Failed to add items");
+        set({ loading: false });
+      }
+    } else {
+      // Save to local storage
+      localStorage.setItem("cart", JSON.stringify(updatedItems));
+      set({ items: updatedItems });
+      toast.success("Items added to cart");
+      set({ loading: false });
+      return true;
+    }
+
+    return false;
+  },
+
   // Remove item from cart
-  async removeItem(email, id) {
+  async removeItem(email, id, attributeId) {
     const { items, loading } = get();
     if (loading) return false;
 
     set({ loading: true });
-    const updatedItems = items.filter((i) => i.id !== id);
+
+    // Filter out the item with matching id AND attributeId (if provided)
+    const updatedItems = items.filter((i) => {
+      if (attributeId !== undefined) {
+        // If attributeId is provided, we need to match both id and attributeId
+        return !(i.id === id && i.attributeId === attributeId);
+      } else {
+        // If attributeId is not provided, we only match the id and only for items without attributeId
+        return !(i.id === id && i.attributeId === undefined);
+      }
+    });
 
     if (email) {
       try {
@@ -170,15 +267,25 @@ const useCart = create<CartStore>((set, get) => ({
   },
 
   // Increment item quantity
-  async incrementQuantity(email, id) {
+  async incrementQuantity(email, id, attributeId) {
     const { items, loading } = get();
     if (loading) return false;
 
     set({ loading: true });
 
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
+    const updatedItems = items.map((item) => {
+      if (attributeId !== undefined) {
+        // If attributeId is provided, match both id and attributeId
+        return item.id === id && item.attributeId === attributeId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item;
+      } else {
+        // If attributeId is not provided, match id and only for items without attributeId
+        return item.id === id && item.attributeId === undefined
+          ? { ...item, quantity: item.quantity + 1 }
+          : item;
+      }
+    });
 
     if (email) {
       try {
@@ -208,15 +315,22 @@ const useCart = create<CartStore>((set, get) => ({
   },
 
   // Decrement item quantity
-  async decrementQuantity(email, id) {
+  async decrementQuantity(email, id, attributeId) {
     const { items, loading } = get();
     if (loading) return false;
 
     set({ loading: true });
+
     const updatedItems = items
       .map((item) => {
-        if (item.id === id) {
-          if (item.quantity === 1) return null;
+        // Match based on id and attributeId
+        const isTargetItem =
+          attributeId !== undefined
+            ? item.id === id && item.attributeId === attributeId
+            : item.id === id && item.attributeId === undefined;
+
+        if (isTargetItem) {
+          if (item.quantity === 1) return null; // Remove if quantity will be 0
           return { ...item, quantity: item.quantity - 1 };
         }
         return item;
@@ -285,7 +399,14 @@ function mergeCarts(
   const mergedItems = [...serverItems];
 
   localItems.forEach((localItem) => {
-    const existingItem = mergedItems.find((item) => item.id === localItem.id);
+    // Find matching item considering both id and attributeId
+    const existingItem = mergedItems.find(
+      (item) =>
+        item.id === localItem.id &&
+        (item.attributeId === localItem.attributeId ||
+          (!item.attributeId && !localItem.attributeId))
+    );
+
     if (existingItem) {
       // If the item exists in both carts, update the quantity
       existingItem.quantity += localItem.quantity;

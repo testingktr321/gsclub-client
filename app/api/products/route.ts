@@ -132,6 +132,11 @@ export async function GET(req: Request) {
             puffs: true,
           },
         },
+        productFlavors: {
+          include: {
+            flavor: true,
+          },
+        },
       },
       skip,
       take: limit,

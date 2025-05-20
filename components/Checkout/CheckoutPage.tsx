@@ -116,7 +116,8 @@ const CheckoutPage = () => {
 
       setProductLoading(true);
       try {
-        const productIds = items.map((item) => item.id).join("&id=");
+        const uniqueProductIds = [...new Set(items.map(item => item.id))];
+        const productIds = uniqueProductIds.join("&id=");
         const res = await fetch(`/api/products?id=${productIds}`);
         const data = await res.json();
         setProducts(data.products);
@@ -129,6 +130,27 @@ const CheckoutPage = () => {
 
     fetchProducts();
   }, [items]);
+
+
+  const getFlavorName = (product: Product, attributeId?: string) => {
+    if (!attributeId || !product.productFlavors || product.productFlavors.length === 0) {
+      return null;
+    }
+    const flavorItem = product.productFlavors.find(pf => pf.flavorId === attributeId);
+    if (flavorItem && flavorItem.flavor) {
+      return flavorItem.flavor.name;
+    }
+    return null;
+  };
+
+  const getProductNameWithFlavor = (product: Product, attributeId?: string) => {
+    const baseName = product.name.charAt(0).toUpperCase() + product.name.slice(1);
+    const flavorName = getFlavorName(product, attributeId);
+    if (flavorName) {
+      return `${baseName} - ${flavorName}`;
+    }
+    return baseName;
+  };
 
   // Configure NMI when script is loaded
   useEffect(() => {
@@ -159,7 +181,7 @@ const CheckoutPage = () => {
           placeholder: "***",
         }
       },
-      
+
       customCss: {
         'border-radius': '0.375rem',
         'padding': '0.75rem',
@@ -317,17 +339,23 @@ const CheckoutPage = () => {
   };
 
   // Calculate original total amount (before any discounts)
-  const originalTotalAmount = products.reduce((total, product) => {
-    const matchingItem = items.find(item => item.id === product.id);
-    const quantity = matchingItem ? matchingItem.quantity : 0;
-    return total + (product.originalPrice * quantity);
+  const originalTotalAmount = items.reduce((total, item) => {
+    const product = products.find(p => p.id === item.id);
+    if (!product) return total;
+
+    const packCount = product.packCount || 1;
+    const quantity = item.quantity;
+    return total + ((product.originalPrice / packCount) * quantity);
   }, 0);
 
   // Calculate current total amount (with product-specific discounts)
-  const totalAmount = products.reduce((total, product) => {
-    const matchingItem = items.find(item => item.id === product.id);
-    const quantity = matchingItem ? matchingItem.quantity : 0;
-    return total + (product.currentPrice * quantity);
+  const totalAmount = items.reduce((total, item) => {
+    const product = products.find(p => p.id === item.id);
+    if (!product) return total;
+
+    const packCount = product.packCount || 1;
+    const quantity = item.quantity;
+    return total + ((product.currentPrice / packCount) * quantity);
   }, 0);
 
   // Calculate discount amount
@@ -349,6 +377,7 @@ const CheckoutPage = () => {
       const lineItems = items.map((item) => ({
         id: item.id,
         quantity: item.quantity,
+        attributeId: item.attributeId || null
       }));
 
       // Use authenticated user email or guest email from form
@@ -702,12 +731,13 @@ const CheckoutPage = () => {
                   </div>
                 ))
               ) : (
-                products.map((product) => {
-                  // Find the corresponding item to get the quantity
-                  const matchingItem = items.find(item => item.id === product.id);
+                items.map((item) => {
+                  // Find the corresponding product
+                  const product = products.find(p => p.id === item.id);
+                  if (!product) return null;
 
                   return (
-                    <div key={product.id} className="flex gap-5 w-full">
+                    <div key={`${item.id}-${item.attributeId || 'default'}`} className="flex gap-5 w-full">
                       <div className="p-2 rounded-md shadow-md border border-gray-200 bg-white md:bg-transparent">
                         <div className="h-[8rem] w-[8rem]">
                           {product.images.length > 0 && (
@@ -725,15 +755,19 @@ const CheckoutPage = () => {
                       <div className="flex flex-col mb-2">
                         {product.brand && <h3 className="text-sm">{product.brand.name}</h3>}
                         <p className="text-md font-semibold line-clamp-2 overflow-hidden text-ellipsis">
-                          {product.name}
+                          {getProductNameWithFlavor(product, item.attributeId)}
                         </p>
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold text-lg">${product.currentPrice}</p>
-                          <del className="text-sm text-gray-500">${product.originalPrice}</del>
+                          <p className="font-semibold text-lg">
+                            ${(product.currentPrice / (product.packCount || 1)).toFixed(2)}
+                          </p>
+                          {product.originalPrice && (
+                            <del className="text-sm text-gray-500">
+                              ${(product.originalPrice / (product.packCount || 1)).toFixed(2)}
+                            </del>
+                          )}
                         </div>
-                        {matchingItem && (
-                          <p className="text-sm">{matchingItem.quantity} pieces</p>
-                        )}
+                        <p className="text-sm">{item.quantity} pieces</p>
                       </div>
                     </div>
                   );

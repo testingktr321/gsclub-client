@@ -45,8 +45,11 @@ model Product {
   currentPrice  Float
   originalPrice Float
   brandId       String @db.ObjectId
-  flavorId      String @db.ObjectId
   nicotineId    String @db.ObjectId
+
+  flavorId       String?          @db.ObjectId
+  productFlavors ProductFlavors[]
+  packCount      Int?
 
   // Optional fields 
   eLiquidContent  String?
@@ -61,19 +64,30 @@ model Product {
 
   // Relations
   brand        Brand          @relation(fields: [brandId], references: [id])
-  flavor       Flavor         @relation(fields: [flavorId], references: [id])
+  flavor       Flavor?        @relation(fields: [flavorId], references: [id])
   Nicotine     Nicotine       @relation(fields: [nicotineId], references: [id])
   images       Image[]
   productPuffs ProductPuffs[]
 
   // System fields
-  isArchived Boolean     @default(false)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  OrderItem  OrderItem[]
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   //new feild 
   redirectLink String?
+  OrderItem    OrderItem[]
+}
+
+model ProductFlavors {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  flavorId  String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  flavor    Flavor   @relation(fields: [flavorId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([productId, flavorId])
 }
 
 model Puffs {
@@ -116,11 +130,12 @@ model Brand {
 }
 
 model Flavor {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  products       Product[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ProductFlavors ProductFlavors[]
 }
 
 model Image {

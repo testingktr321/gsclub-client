@@ -33,6 +33,11 @@ const page = async ({ params }: Props) => {
                         createdAt: 'asc',
                     },
                 },
+                productFlavors: {
+                    include: {
+                        flavor: true
+                    }
+                }
             },
         });
 
@@ -42,6 +47,7 @@ const page = async ({ params }: Props) => {
 
         const transformedProduct: Product = {
             ...product,
+            packCount: product.packCount ?? 1,
             puffs: product.productPuffs.map(pp => ({
                 ...pp.puffs,
                 description: pp.puffDesc,

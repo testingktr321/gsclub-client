@@ -45,6 +45,15 @@ interface ProductPuffs {
   puffs: Puffs;
 }
 
+// New interface for the ProductFlavors relation
+export interface ProductFlavors {
+  id: string;
+  productId: string;
+  flavorId: string;
+  createdAt: Date;
+  flavor: Flavor; // Include the related flavor
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -64,12 +73,14 @@ export interface Product {
   isArchived: boolean;
   brandId: string;
   brand: Brand;
-  flavorId: string;
-  flavor: Flavor;
+  flavorId: string | null; // Make flavorId optional since it might use productFlavors instead
+  flavor: Flavor | null; // Make flavor optional for the same reason
   nicotineId: string;
   Nicotine: Nicotine;
   // Many-to-many relation through ProductPuffs
   productPuffs: (ProductPuffs & { puffs: Puffs })[];
+  // The new productFlavors relation
+  productFlavors?: ProductFlavors[];
   // Alternative flattened representation (optional)
   puffs?: Array<Puffs & { description: string }>;
   // Images
@@ -78,4 +89,5 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
   redirectLink: string | null;
+  packCount: number;
 }

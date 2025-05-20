@@ -70,6 +70,11 @@ export async function POST(req: NextRequest) {
         brand: true,
         flavor: true,
         Nicotine: true,
+        productFlavors: {
+          include: {
+            flavor: true,
+          },
+        },
         productPuffs: {
           include: {
             puffs: true,
@@ -92,22 +97,40 @@ export async function POST(req: NextRequest) {
       const product = productsWithDetails.find((p) => p.id === item.id);
       if (!product) throw new Error(`Product not found: ${item.id}`);
 
-      // Calculate item total and add to subtotal
-      const itemPrice = product.currentPrice;
-      subtotal += itemPrice * item.quantity;
+      // Handle flavor based on attributeId
+      let flavorName = null;
+      if (item.attributeId) {
+        // Find the specific flavor from productFlavors
+        const productFlavor = product.productFlavors.find(
+          (pf) => pf.flavorId === item.attributeId
+        );
+        flavorName = productFlavor?.flavor.name || null;
+      } else if (product.flavor) {
+        // Use the direct flavor relation if no attributeId
+        flavorName = product.flavor.name;
+      }
+
+      // Calculate price per item considering packCount
+      const packCount = product.packCount || 1;
+      const itemPrice = product.currentPrice / packCount;
+      const itemTotal = itemPrice * item.quantity;
+      subtotal += itemTotal;
 
       // Create product snapshot with required fields only
       return {
         quantity: item.quantity,
         productId: product.id,
-        purchasePrice: itemPrice,
+        purchasePrice: itemPrice, // Store per-item price
+        attributeId: item.attributeId || null, // Store the attributeId if exists
         productSnapshot: {
           id: product.id,
           name: product.name,
-          currentPrice: product.currentPrice,
-          originalPrice: product.originalPrice,
+          currentPrice: itemPrice, // Store per-item price
+          originalPrice: product.originalPrice
+            ? product.originalPrice / packCount
+            : null,
           brandName: product.brand.name,
-          flavorName: product.flavor.name,
+          flavorName: flavorName,
           nicotineName: product.Nicotine.name,
           // Include puffs data if available
           puffs: product.productPuffs.map((pp) => ({
