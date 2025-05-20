@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
@@ -9,15 +9,15 @@ import ProductShimmer from './ProductShimmer';
 // import { FaSpinner } from 'react-icons/fa';
 import { useFilter } from '@/hooks/useFilter';
 import { Product } from '@/types/product';
+import { useInView } from 'react-intersection-observer';
 
-
-interface ApiResponse {
-    products: Product[];
-    totalCount: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-}
+// interface ApiResponse {
+//     products: Product[];
+//     totalCount: number;
+//     page: number;
+//     pageSize: number;
+//     totalPages: number;
+// }
 
 const Products = () => {
     // const { data: session } = useSession();
@@ -26,45 +26,69 @@ const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     // const [loadingProducts, setLoadingProducts] = useState<Record<string, boolean>>({});
 
     const { brandId, flavorId, puffsId, nicotineId } = useFilter();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                let url = '/api/products';
+    // Intersection Observer hook
+    const { ref, inView } = useInView({
+        threshold: 0,
+        triggerOnce: false
+    });
 
-                // Add filter parameters if they exist
-                const params = new URLSearchParams();
-                if (brandId) params.append('brandId', brandId);
-                if (flavorId) params.append('flavorId', flavorId);
-                if (puffsId) params.append('puffsId', puffsId);
-                if (nicotineId) params.append('nicotineId', nicotineId);
+    const fetchProducts = useCallback(async () => {
+        try {
+            setLoading(true);
+            const url = '/api/products?';
 
-                if (params.toString()) {
-                    url += `?${params.toString()}`;
-                }
+            // Add filter parameters
+            const params = new URLSearchParams();
+            if (brandId) params.append('brandId', brandId);
+            if (flavorId) params.append('flavorId', flavorId);
+            if (puffsId) params.append('puffsId', puffsId);
+            if (nicotineId) params.append('nicotineId', nicotineId);
 
-                const response = await fetch(url);
+            // Add pagination
+            params.append('page', page.toString());
+            params.append('limit', '24'); // Load 24 products at a time
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch products');
-                }
+            const response = await fetch(url + params.toString());
 
-                const data: ApiResponse = await response.json();
+            if (!response.ok) throw new Error('Failed to fetch products');
+
+            const data = await response.json();
+
+            if (page === 1) {
                 setProducts(data.products);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred');
-                console.error('Error fetching products:', err);
-            } finally {
-                setLoading(false);
+            } else {
+                setProducts(prev => [...prev, ...data.products]);
             }
-        };
 
-        fetchProducts();
+            setHasMore(data.products.length > 0);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+        } finally {
+            setLoading(false);
+        }
+    }, [brandId, flavorId, puffsId, nicotineId, page]);
+
+    useEffect(() => {
+        // Reset to page 1 when filters change
+        setPage(1);
+        setHasMore(true);
     }, [brandId, flavorId, puffsId, nicotineId]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    useEffect(() => {
+        if (inView && hasMore && !loading) {
+            setPage(prev => prev + 1);
+        }
+    }, [inView, hasMore, loading]);
 
     // const handleAddToCart = async (productId: string, event: React.MouseEvent<HTMLButtonElement>) => {
     //     event.stopPropagation();
@@ -88,7 +112,7 @@ const Products = () => {
     //     }
     // };
 
-    if (loading) {
+    if (loading && page === 1) {
         return <ProductShimmer />;
     }
 
@@ -116,70 +140,112 @@ const Products = () => {
                     <p className="text-sm text-gray-500">Try adjusting your filters or check back later</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 xl:gap-10">
-                    {products.map((product) => (
-                        <Link href={`/product/${product.id}`} key={product.id}>
-                            <div className="border-2 border-gray-200 rounded-3xl md:rounded-4xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                                <div className="aspect-square relative bg-gray-100 h-[42%] md:h-[50%]">
-                                    {product.images.length > 0 ? (
-                                        <img
-                                            src={product.images[0].url}
-                                            alt={product.name}
-                                            className="object-cover w-full h-full"
-                                        />
-                                    ) : (
-                                        <div className="flex items-center justify-center h-full">
-                                            <ShoppingBag className="h-10 w-10 text-gray-300" />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="pt-3 pb-5 md:pb-5 px-2 md:px-4 flex flex-col flex-grow justify-between">
-                                    <div>
-                                        <div className="flex items-center justify-center text-sm md:text-xl">
-                                            <span className="">${product.currentPrice.toFixed(2)}</span>
-                                            <span className="ml-2 text-sm md:text-base text-gray-500 line-through">
-                                                ${product.originalPrice.toFixed(2)}
-                                            </span>
-                                        </div>
-                                        <h3 className="font-semibold text-base md:text-xl mt-1.5 md:mt-2.5 text-center line-clamp-2">
-                                            {product.brand.name}
-                                        </h3>
-                                        <h3 className="font-semibold text-base md:text-xl text-center line-clamp-3 mt-0.5 md:mt-1 leading-5 md:leading-7">
-                                            {product.name}
-                                        </h3>
-                                        {/* <h3 className="font-semibold text-base md:text-xl text-center line-clamp-2">
-                                            {product.flavor.name}
-                                        </h3> */}
-                                    </div>
-
-                                    <div className='w-full mb-1.5 -mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
-                                        <div>
-                                            <span className="w-full underline">
-                                                View product
-                                            </span>
-                                        </div>
-                                        {product?.redirectLink && (
-                                            <Button
-                                                type="submit"
-                                            // disabled={loadingProducts[product.id]}
-                                            // onClick={(event) => handleAddToCart(product.id, event)}
-                                            >
-                                                {/* {loadingProducts[product.id] ? (
-                                                <FaSpinner className="animate-spin mx-auto" />
-                                            ) : (
-                                                "Add to Cart"
-                                            )} */}
-                                                <Link href={product?.redirectLink || ""}>
-                                                    Shop on GetSmoke
-                                                </Link>
-                                            </Button>
+                <>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 xl:gap-10">
+                        {products.map((product) => (
+                            <Link href={`/product/${product.id}`} key={product.id}>
+                                <div className="border-2 border-gray-200 rounded-3xl md:rounded-4xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
+                                    <div className="aspect-square relative bg-gray-100 h-[42%] md:h-[50%]">
+                                        {product.images.length > 0 ? (
+                                            <img
+                                                src={product.images[0].url}
+                                                alt={product.name}
+                                                className="object-cover w-full h-full"
+                                            />
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full">
+                                                <ShoppingBag className="h-10 w-10 text-gray-300" />
+                                            </div>
                                         )}
                                     </div>
+                                    <div className="pt-3 pb-5 md:pb-5 px-2 md:px-4 flex flex-col flex-grow justify-between">
+                                        <div>
+                                            <div className="flex items-center justify-center text-sm md:text-xl">
+                                                <span className="">${product.currentPrice.toFixed(2)}</span>
+                                                {product.originalPrice && (
+                                                    <span className="ml-2 text-sm md:text-base text-gray-500 line-through">
+                                                        ${product.originalPrice.toFixed(2)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <h3 className="font-semibold text-base md:text-xl mt-1.5 md:mt-2.5 text-center line-clamp-2">
+                                                {product.brand.name}
+                                            </h3>
+                                            <h3 className="font-semibold text-base md:text-xl text-center line-clamp-3 mt-0.5 md:mt-1 leading-5 md:leading-7">
+                                                {product.name}
+                                            </h3>
+                                        </div>
+
+                                        <div className='w-full mb-1.5 -mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
+                                            <div>
+                                                <span className="w-full underline">
+                                                    View product
+                                                </span>
+                                            </div>
+                                            {product?.redirectLink && (
+                                                <Button type="submit" className='leading-4 lg:whitespace-nowrap'>
+                                                    <Link href={product?.redirectLink || ""}>
+                                                        Shop on GetSmoke
+                                                    </Link>
+                                                </Button>
+                                            )}
+                                            {/* {product.packCount > 1 ? (
+                                                <Button
+                                                    className="w-full"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <Link href={`/product/${product.id}`}>
+                                                        Select Options
+                                                    </Link>
+                                                </Button>
+                                            ) : product?.redirectLink ? (
+                                                <Button
+                                                    type="submit"
+                                                    className='leading-4 lg:whitespace-nowrap'
+                                                    disabled={loadingProducts[product.id]}
+                                                    onClick={(event) => handleAddToCart(product.id, event)}
+                                                >
+                                                    {loadingProducts[product.id] ? (
+                                                        <FaSpinner className="animate-spin mx-auto" />
+                                                    ) : (
+                                                        "Add to Cart"
+                                                    )}
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    type="submit"
+                                                    className='leading-4 lg:whitespace-nowrap'
+                                                    disabled={loadingProducts[product.id]}
+                                                    onClick={(event) => handleAddToCart(product.id, event)}
+                                                >
+                                                    {loadingProducts[product.id] ? (
+                                                        <FaSpinner className="animate-spin mx-auto" />
+                                                    ) : (
+                                                        "Add to Cart"
+                                                    )}
+                                                </Button>
+                                            )} */}
+                                        </div>
+                                    </div>
                                 </div>
+                            </Link>
+                        ))}
+                    </div>
+                    {/* Loading indicator at the bottom */}
+                    <div ref={ref} className="mt-8">
+                        {loading && page > 1 && (
+                            <div className="flex justify-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                             </div>
-                        </Link>
-                    ))}
-                </div>
+                        )}
+                        {!hasMore && products.length > 0 && (
+                            <p className="text-center text-gray-500 py-4">
+                                You&apos;ve reached the end of products
+                            </p>
+                        )}
+                    </div>
+                </>
+
             )}
         </section>
     );

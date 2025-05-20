@@ -2,14 +2,14 @@
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
-import { FaMinus, FaPlus, FaSpinner, FaChevronDown } from 'react-icons/fa';
-import { useSession } from 'next-auth/react';
-import useCart from '@/hooks/useCart';
+import { FaChevronDown } from 'react-icons/fa';
+// import { useSession } from 'next-auth/react';
+// import useCart from '@/hooks/useCart';
 import { Product } from '@/types/product';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import RelatedPRoduct from './RelatedPRoduct';
-import { toast } from 'react-hot-toast';
+// import { toast } from 'react-hot-toast';
 
 interface SingleProductProps {
     product: Product | null;
@@ -92,11 +92,11 @@ const CustomDropdown = ({
 };
 
 const ProductPage = ({ product }: SingleProductProps) => {
-    const { data: session } = useSession();
-    const email = session?.user.email || "";
-    const cart = useCart();
-    const [quantity, setQuantity] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
+    // const { data: session } = useSession();
+    // const email = session?.user.email || "";
+    // const cart = useCart();
+    // const [quantity, setQuantity] = useState(1);
+    // const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [selectedFlavors, setSelectedFlavors] = useState<{ [key: number]: string }>({});
     const [availableFlavors, setAvailableFlavors] = useState<{ id: string, name: string }[]>([]);
@@ -154,15 +154,15 @@ const ProductPage = ({ product }: SingleProductProps) => {
         return [];
     };
 
-    const handleIncrement = () => {
-        setQuantity((prev) => prev + 1);
-    };
+    // const handleIncrement = () => {
+    //     setQuantity((prev) => prev + 1);
+    // };
 
-    const handleDecrement = () => {
-        if (quantity > 1) {
-            setQuantity((prev) => prev - 1);
-        }
-    };
+    // const handleDecrement = () => {
+    //     if (quantity > 1) {
+    //         setQuantity((prev) => prev - 1);
+    //     }
+    // };
 
     const handleFlavorChange = (packIndex: number, flavorId: string) => {
         setSelectedFlavors(prev => ({
@@ -179,56 +179,56 @@ const ProductPage = ({ product }: SingleProductProps) => {
         return true;
     };
 
-    const addToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        setIsLoading(true);
+    // const addToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    //     event.stopPropagation();
+    //     setIsLoading(true);
 
-        try {
-            if (hasMultipleFlavors && !allFlavorsSelected()) {
-                toast.error("Please select all flavors before adding to cart");
-                setIsLoading(false);
-                return;
-            }
+    //     try {
+    //         if (hasMultipleFlavors && !allFlavorsSelected()) {
+    //             toast.error("Please select all flavors before adding to cart");
+    //             setIsLoading(false);
+    //             return;
+    //         }
 
-            if (hasSingleFlavor) {
-                // Simple case - single flavor product
-                const productData = {
-                    id: product!.id,
-                    quantity: quantity,
-                };
-                await cart.addItem(email, productData);
-            } else if (hasMultipleFlavors) {
-                // Pack of products - collect all items first
-                const itemsToAdd = [];
-                const flavorGroups: { [key: string]: number } = {};
+    //         if (hasSingleFlavor) {
+    //             // Simple case - single flavor product
+    //             const productData = {
+    //                 id: product!.id,
+    //                 quantity: quantity,
+    //             };
+    //             await cart.addItem(email, productData);
+    //         } else if (hasMultipleFlavors) {
+    //             // Pack of products - collect all items first
+    //             const itemsToAdd = [];
+    //             const flavorGroups: { [key: string]: number } = {};
 
-                // Count how many of each flavor was selected
-                for (let i = 0; i < product.packCount; i++) {
-                    const flavorId = selectedFlavors[i];
-                    if (flavorId) {
-                        flavorGroups[flavorId] = (flavorGroups[flavorId] || 0) + 1;
-                    }
-                }
+    //             // Count how many of each flavor was selected
+    //             for (let i = 0; i < product.packCount; i++) {
+    //                 const flavorId = selectedFlavors[i];
+    //                 if (flavorId) {
+    //                     flavorGroups[flavorId] = (flavorGroups[flavorId] || 0) + 1;
+    //                 }
+    //             }
 
-                // Create array of items to add in batch
-                for (const [flavorId, count] of Object.entries(flavorGroups)) {
-                    itemsToAdd.push({
-                        id: product!.id,
-                        quantity: count * quantity, // Multiply by the quantity of packs
-                        attributeId: flavorId // Using attributeId to distinguish flavors
-                    });
-                }
+    //             // Create array of items to add in batch
+    //             for (const [flavorId, count] of Object.entries(flavorGroups)) {
+    //                 itemsToAdd.push({
+    //                     id: product!.id,
+    //                     quantity: count * quantity, // Multiply by the quantity of packs
+    //                     attributeId: flavorId // Using attributeId to distinguish flavors
+    //                 });
+    //             }
 
-                // Add all items at once
-                await cart.addItems(email, itemsToAdd);
-            }
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-            toast.error("Failed to add items to cart");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    //             // Add all items at once
+    //             await cart.addItems(email, itemsToAdd);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error adding to cart:", error);
+    //         toast.error("Failed to add items to cart");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     if (!product) {
         return <div className="flex justify-center items-center min-h-screen">
@@ -369,7 +369,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                             ) : (
                                 <>
                                     {/* Quantity Selector - Only show for single flavor products */}
-                                    {!hasMultipleFlavors && (
+                                    {/* {!hasMultipleFlavors && (
                                         <div className="border border-slate-300 px-4 py-2 rounded-full flex items-center justify-between gap-6 w-full lg:w-fit">
                                             <span className="cursor-pointer" onClick={handleDecrement}>
                                                 <FaMinus />
@@ -379,10 +379,10 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                                 <FaPlus />
                                             </span>
                                         </div>
-                                    )}
+                                    )} */}
 
                                     {/* Add to Cart Button */}
-                                    <Button
+                                    {/* <Button
                                         type="submit"
                                         variant="primary"
                                         className="px-8 w-full"
@@ -394,13 +394,13 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                         ) : (
                                             `Add to Cart${hasMultipleFlavors ? ` (${product.packCount} items)` : ''}`
                                         )}
-                                    </Button>
+                                    </Button> */}
 
                                     {product?.redirectLink && (
                                         <Button
                                             type="submit"
                                             variant="primary"
-                                            className="px-8 w-full"
+                                            className="px-8 w-full leading-4 whitespace-nowrap"
                                         >
                                             <Link href={product?.redirectLink || ""}>
                                                 Shop on GetSmoke

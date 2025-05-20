@@ -287,7 +287,7 @@ const CartPage = () => {
                                                     <Button
                                                         variant="secondary"
                                                         onClick={() => router.push("/")}
-                                                        className="flex items-center gap-2"
+                                                        className="flex items-center gap-2 whitespace-nowrap"
                                                     >
                                                         <IoIosArrowBack />
                                                         Return to shop
@@ -297,7 +297,7 @@ const CartPage = () => {
                                                     <Button
                                                         variant="primary"
                                                         onClick={handleCheckout}
-                                                        className="flex items-center gap-2"
+                                                        className="flex items-center gap-2 whitespace-nowrap"
                                                     >
                                                         Proceed to Checkout
                                                         <IoIosArrowForward />

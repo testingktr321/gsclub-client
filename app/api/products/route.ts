@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     const productIds = searchParams.getAll("id");
     const limit = searchParams.get("limit")
       ? parseInt(searchParams.get("limit")!)
-      : undefined;
+      : 12;
     const page = searchParams.get("page")
       ? parseInt(searchParams.get("page")!)
       : 1;
@@ -31,8 +31,6 @@ export async function GET(req: Request) {
     const filter: Prisma.ProductWhereInput = {};
 
     // Only apply the archive filter if we're not querying by specific IDs
-    // This way, when using the `/api/products?id=${productIds}` endpoint,
-    // we'll get both archived and non-archived products
     if (!productIds.length) {
       filter.isArchived = archived;
     }
@@ -44,7 +42,6 @@ export async function GET(req: Request) {
 
     // Add relational filters
     if (brandId) filter.brandId = brandId;
-    if (flavorId) filter.flavorId = flavorId;
     if (nicotineId) filter.nicotineId = nicotineId;
 
     // Add puffs filter through ProductPuffs relation
@@ -75,8 +72,7 @@ export async function GET(req: Request) {
       ];
     }
 
-    // Add flavor filter with AND logic for multiple words
-    // Updated flavor filtering logic that handles the edge case
+    // Enhanced flavor filtering that checks both direct flavor relation and productFlavors
     if (flavorId) {
       // First get the flavor name from the database
       const flavor = await prisma.flavor.findUnique({
@@ -85,36 +81,82 @@ export async function GET(req: Request) {
       });
 
       if (flavor) {
-        // Remove the simple flavorId filter
-        delete filter.flavorId;
-
         // Split the flavor name into words
         const flavorWords = flavor.name
           .split(" ")
           .filter((word) => word.length > 0);
 
-        if (flavorWords.length === 1) {
-          // For single-word flavors, use a more precise matching approach
-          // to prevent partial word matches (like "grape" matching "grapefruit")
-          filter.flavor = {
-            OR: [
-              // Match exact flavor name (case insensitive)
-              { name: { equals: flavor.name, mode: "insensitive" } },
-              // Match flavor name followed by a space and other words
-              { name: { startsWith: `${flavor.name} `, mode: "insensitive" } },
-              // Match flavor name with a space before it and possibly more text after
-              { name: { contains: ` ${flavor.name} `, mode: "insensitive" } },
-              // Match flavor name with a space before it and nothing after
-              { name: { endsWith: ` ${flavor.name}`, mode: "insensitive" } },
-            ],
-          };
-        } else {
-          // For multi-word flavors, keep the existing approach that works well
-          filter.flavor = {
-            AND: flavorWords.map((word) => ({
-              name: { contains: word, mode: "insensitive" },
-            })),
-          };
+        // Create OR condition that checks both direct flavor relation and productFlavors
+        filter.OR = [
+          // Direct flavor relation
+          {
+            flavor: {
+              OR: [
+                { name: { equals: flavor.name, mode: "insensitive" } },
+                {
+                  name: { startsWith: `${flavor.name} `, mode: "insensitive" },
+                },
+                { name: { contains: ` ${flavor.name} `, mode: "insensitive" } },
+                { name: { endsWith: ` ${flavor.name}`, mode: "insensitive" } },
+              ],
+            },
+          },
+          // ProductFlavors relation
+          {
+            productFlavors: {
+              some: {
+                flavor: {
+                  OR: [
+                    { name: { equals: flavor.name, mode: "insensitive" } },
+                    {
+                      name: {
+                        startsWith: `${flavor.name} `,
+                        mode: "insensitive",
+                      },
+                    },
+                    {
+                      name: {
+                        contains: ` ${flavor.name} `,
+                        mode: "insensitive",
+                      },
+                    },
+                    {
+                      name: {
+                        endsWith: ` ${flavor.name}`,
+                        mode: "insensitive",
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        ];
+
+        // For multi-word flavors, we need to use AND conditions
+        if (flavorWords.length > 1) {
+          filter.OR = [
+            // Direct flavor relation
+            {
+              flavor: {
+                AND: flavorWords.map((word) => ({
+                  name: { contains: word, mode: "insensitive" },
+                })),
+              },
+            },
+            // ProductFlavors relation
+            {
+              productFlavors: {
+                some: {
+                  flavor: {
+                    AND: flavorWords.map((word) => ({
+                      name: { contains: word, mode: "insensitive" },
+                    })),
+                  },
+                },
+              },
+            },
+          ];
         }
       }
     }

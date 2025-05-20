@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const page = searchParams.get("page")
       ? parseInt(searchParams.get("page")!)
       : 1;
-    const skip = page && limit ? (page - 1) * limit : undefined;
+    const skip = page && limit ? (page - 1) * limit : 12;
 
     // Filter parameters
     const brandId = searchParams.get("brandId");
