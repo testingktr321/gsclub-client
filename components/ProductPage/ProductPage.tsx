@@ -1,8 +1,8 @@
 "use client";
 import Image from 'next/image';
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Button } from '../ui/button';
-import { FaChevronDown } from 'react-icons/fa';
+// import { FaChevronDown } from 'react-icons/fa';
 // import { useSession } from 'next-auth/react';
 // import useCart from '@/hooks/useCart';
 import { Product } from '@/types/product';
@@ -15,81 +15,81 @@ interface SingleProductProps {
     product: Product | null;
 }
 
-const CustomDropdown = ({
-    options,
-    selectedValue,
-    onSelect,
-    disabledOptions = [],
-    placeholder = "Select an option"
-}: {
-    options: { id: string, name: string }[],
-    selectedValue: string,
-    onSelect: (value: string) => void,
-    disabledOptions?: string[],
-    placeholder?: string
-}) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+// const CustomDropdown = ({
+//     options,
+//     selectedValue,
+//     onSelect,
+//     disabledOptions = [],
+//     placeholder = "Select an option"
+// }: {
+//     options: { id: string, name: string }[],
+//     selectedValue: string,
+//     onSelect: (value: string) => void,
+//     disabledOptions?: string[],
+//     placeholder?: string
+// }) => {
+//     const [isOpen, setIsOpen] = useState(false);
+//     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
+//     useEffect(() => {
+//         const handleClickOutside = (event: MouseEvent) => {
+//             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+//                 setIsOpen(false);
+//             }
+//         };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+//         document.addEventListener('mousedown', handleClickOutside);
+//         return () => {
+//             document.removeEventListener('mousedown', handleClickOutside);
+//         };
+//     }, []);
 
-    // Find the currently selected option
-    const selectedOption = options.find(opt => opt.id === selectedValue);
+//     // Find the currently selected option
+//     const selectedOption = options.find(opt => opt.id === selectedValue);
 
-    return (
-        <div className="relative w-full text-sm" ref={dropdownRef}>
-            <button
-                type="button"
-                className={`flex items-center justify-between w-full px-4 py-2 border rounded-md ${isOpen ? 'border-blue-500' : 'border-gray-300'}`}
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                <span className="truncate">
-                    {selectedOption?.name || placeholder}
-                </span>
-                <FaChevronDown className={`ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-            </button>
+//     return (
+//         <div className="relative w-full text-sm" ref={dropdownRef}>
+//             <button
+//                 type="button"
+//                 className={`flex items-center justify-between w-full px-4 py-2 border rounded-md ${isOpen ? 'border-blue-500' : 'border-gray-300'}`}
+//                 onClick={() => setIsOpen(!isOpen)}
+//             >
+//                 <span className="truncate">
+//                     {selectedOption?.name || placeholder}
+//                 </span>
+//                 <FaChevronDown className={`ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+//             </button>
 
-            {isOpen && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                    {options.map((option) => {
-                        const isDisabled = disabledOptions.includes(option.id);
+//             {isOpen && (
+//                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+//                     {options.map((option) => {
+//                         const isDisabled = disabledOptions.includes(option.id);
 
-                        return (
-                            <button
-                                key={option.id}
-                                type="button"
-                                className={`w-full text-left px-4 py-2 
-                                    ${selectedValue === option.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'} 
-                                    ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!isDisabled) {
-                                        onSelect(option.id);
-                                        setIsOpen(false);
-                                    }
-                                }}
-                                disabled={isDisabled}
-                            >
-                                {option.name}
-                            </button>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
-    );
-};
+//                         return (
+//                             <button
+//                                 key={option.id}
+//                                 type="button"
+//                                 className={`w-full text-left px-4 py-2 
+//                                     ${selectedValue === option.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'} 
+//                                     ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+//                                 onClick={(e) => {
+//                                     e.stopPropagation();
+//                                     if (!isDisabled) {
+//                                         onSelect(option.id);
+//                                         setIsOpen(false);
+//                                     }
+//                                 }}
+//                                 disabled={isDisabled}
+//                             >
+//                                 {option.name}
+//                             </button>
+//                         );
+//                     })}
+//                 </div>
+//             )}
+//         </div>
+//     );
+// };
 
 const ProductPage = ({ product }: SingleProductProps) => {
     // const { data: session } = useSession();
@@ -98,61 +98,61 @@ const ProductPage = ({ product }: SingleProductProps) => {
     // const [quantity, setQuantity] = useState(1);
     // const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const [selectedFlavors, setSelectedFlavors] = useState<{ [key: number]: string }>({});
-    const [availableFlavors, setAvailableFlavors] = useState<{ id: string, name: string }[]>([]);
+    // const [selectedFlavors, setSelectedFlavors] = useState<{ [key: number]: string }>({});
+    // const [availableFlavors, setAvailableFlavors] = useState<{ id: string, name: string }[]>([]);
 
     const hasMultipleFlavors = product?.productFlavors && product.productFlavors.length > 0;
     const hasSingleFlavor = product?.flavorId && !hasMultipleFlavors;
 
-    useEffect(() => {
-        if (hasMultipleFlavors) {
-            // Get all available flavors from the product
-            const flavors = product.productFlavors!.map(pf => ({
-                id: pf.flavorId,
-                name: pf.flavor.name
-            }));
-            setAvailableFlavors(flavors);
+    // useEffect(() => {
+    //     if (hasMultipleFlavors) {
+    //         // Get all available flavors from the product
+    //         const flavors = product.productFlavors!.map(pf => ({
+    //             id: pf.flavorId,
+    //             name: pf.flavor.name
+    //         }));
+    //         setAvailableFlavors(flavors);
 
-            // Initialize selected flavors only if they haven't been selected yet
-            if (flavors.length > 0) {
-                setSelectedFlavors(prevSelected => {
-                    // Only set default values for uninitialized selections
-                    const newSelections = { ...prevSelected };
-                    for (let i = 0; i < product.packCount; i++) {
-                        if (!newSelections[i]) {
-                            newSelections[i] = flavors[0].id;
-                        }
-                    }
-                    return newSelections;
-                });
-            }
-        } else if (hasSingleFlavor) {
-            // For single flavor, set it as the only available option
-            if (product.flavorId) {
-                setAvailableFlavors([{
-                    id: product.flavorId,
-                    name: product.flavor?.name || "Default Flavor"
-                }]);
+    //         // Initialize selected flavors only if they haven't been selected yet
+    //         if (flavors.length > 0) {
+    //             setSelectedFlavors(prevSelected => {
+    //                 // Only set default values for uninitialized selections
+    //                 const newSelections = { ...prevSelected };
+    //                 for (let i = 0; i < product.packCount; i++) {
+    //                     if (!newSelections[i]) {
+    //                         newSelections[i] = flavors[0].id;
+    //                     }
+    //                 }
+    //                 return newSelections;
+    //             });
+    //         }
+    //     } else if (hasSingleFlavor) {
+    //         // For single flavor, set it as the only available option
+    //         if (product.flavorId) {
+    //             setAvailableFlavors([{
+    //                 id: product.flavorId,
+    //                 name: product.flavor?.name || "Default Flavor"
+    //             }]);
 
-                setSelectedFlavors({ 0: product.flavorId });
-            }
-        }
-    }, [product, hasMultipleFlavors, hasSingleFlavor]);
+    //             setSelectedFlavors({ 0: product.flavorId });
+    //         }
+    //     }
+    // }, [product, hasMultipleFlavors, hasSingleFlavor]);
 
-    const getDisabledFlavors = (currentIndex: number) => {
+    // const getDisabledFlavors = (currentIndex: number) => {
 
-        // Only disable flavors that are already selected in other positions
-        // and only if we're enforcing unique flavor selection
-        const enforceUniqueFlavors = availableFlavors.length === product?.packCount;
+    //     // Only disable flavors that are already selected in other positions
+    //     // and only if we're enforcing unique flavor selection
+    //     const enforceUniqueFlavors = availableFlavors.length === product?.packCount;
 
-        if (enforceUniqueFlavors) {
-            return Object.entries(selectedFlavors)
-                .filter(([index]) => Number(index) !== currentIndex)
-                .map(([, flavorId]) => flavorId);
-        }
+    //     if (enforceUniqueFlavors) {
+    //         return Object.entries(selectedFlavors)
+    //             .filter(([index]) => Number(index) !== currentIndex)
+    //             .map(([, flavorId]) => flavorId);
+    //     }
 
-        return [];
-    };
+    //     return [];
+    // };
 
     // const handleIncrement = () => {
     //     setQuantity((prev) => prev + 1);
@@ -164,20 +164,20 @@ const ProductPage = ({ product }: SingleProductProps) => {
     //     }
     // };
 
-    const handleFlavorChange = (packIndex: number, flavorId: string) => {
-        setSelectedFlavors(prev => ({
-            ...prev,
-            [packIndex]: flavorId
-        }));
-    };
+    // const handleFlavorChange = (packIndex: number, flavorId: string) => {
+    //     setSelectedFlavors(prev => ({
+    //         ...prev,
+    //         [packIndex]: flavorId
+    //     }));
+    // };
 
-    const allFlavorsSelected = () => {
-        if (!hasMultipleFlavors) return true;
-        for (let i = 0; i < product.packCount; i++) {
-            if (!selectedFlavors[i]) return false;
-        }
-        return true;
-    };
+    // const allFlavorsSelected = () => {
+    //     if (!hasMultipleFlavors) return true;
+    //     for (let i = 0; i < product.packCount; i++) {
+    //         if (!selectedFlavors[i]) return false;
+    //     }
+    //     return true;
+    // };
 
     // const addToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
     //     event.stopPropagation();
@@ -335,7 +335,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                         </div>
 
                         {/* Flavor Selection for Packs */}
-                        {hasMultipleFlavors && availableFlavors.length > 0 && (
+                        {/* {hasMultipleFlavors && availableFlavors.length > 0 && (
                             <div className="mt-4 p-4 border border-gray-200 rounded-lg">
                                 <h3 className="font-semibold mb-4">Pack of {product.packCount} - Select Flavors</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -358,7 +358,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                     </p>
                                 )}
                             </div>
-                        )}
+                        )} */}
 
                         {/* Stock Action Section */}
                         <div className="mt-8 flex flex-col lg:flex-row w-full items-center gap-4">
