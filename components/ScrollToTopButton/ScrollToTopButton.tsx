@@ -9,14 +9,17 @@ const ScrollToTopButton = () => {
 
     // Show button when page is scrolled down
     const toggleVisibility = () => {
-        // Check if window exists (important for Next.js)
         if (typeof window !== 'undefined') {
-            // Show button when scrolled down more than half of viewport height
-            if (window.scrollY > window.innerHeight / 2) {
-                setIsVisible(true);
-            } else {
-                setIsVisible(false);
-            }
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            // Show button when scrolled down but not too close to bottom
+            const shouldShow = scrollTop > windowHeight / 2;
+            const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
+            const isNearFooter = distanceFromBottom < 150;
+
+            setIsVisible(shouldShow && !isNearFooter);
         }
     };
 
