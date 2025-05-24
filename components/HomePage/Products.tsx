@@ -185,7 +185,7 @@ const Products = () => {
                                             {product?.redirectLink && (
                                                 <Button type="submit" className='leading-4 lg:whitespace-nowrap'>
                                                     <Link href={product?.redirectLink || ""}>
-                                                        Shop on GetSmoke
+                                                        Shop Now
                                                     </Link>
                                                 </Button>
                                             )}

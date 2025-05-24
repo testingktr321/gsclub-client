@@ -403,7 +403,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                             className="px-8 w-full leading-4 whitespace-nowrap"
                                         >
                                             <Link href={product?.redirectLink || ""}>
-                                                Shop on GetSmoke
+                                                Shop Now
                                             </Link>
                                         </Button>
                                     )}
