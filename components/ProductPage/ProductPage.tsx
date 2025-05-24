@@ -431,6 +431,23 @@ const ProductPage = ({ product }: SingleProductProps) => {
                     <RelatedPRoduct brandId={product.brandId} />
                 )}
             </section>
+
+            <section className='w-full -mt-7 md:-mt-10'>
+                <Image
+                    src="/images/rp_banner.png"
+                    width={1000}
+                    height={1000}
+                    alt='banner'
+                    className='w-full h-auto object-cover md:block hidden'
+                />
+                <Image
+                    src="/images/rp_banner2.png"
+                    width={1000}
+                    height={1000}
+                    alt='banner'
+                    className='w-full h-auto object-cover md:hidden block'
+                />
+            </section>
         </main>
     );
 };

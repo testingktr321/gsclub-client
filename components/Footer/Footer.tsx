@@ -4,11 +4,11 @@ import React from 'react';
 
 const Footer = () => {
     const footerLinks = [
-        { title: "Privacy Policy", href: "/" },
-        { title: "Terms and Conditions", href: "/" },
-        { title: "Return Policy", href: "/" },
-        { title: "Shipping Policy", href: "/" },
-        { title: "Contact", href: "/" },
+        { title: "Privacy Policy", href: "/privacy-policy" },
+        { title: "Terms and Conditions", href: "/terms-conditions" },
+        { title: "Return Policy", href: "/return-policy" },
+        { title: "Shipping Policy", href: "/shipping-policy" },
+        { title: "Contact", href: "/contact" },
     ];
 
     return (

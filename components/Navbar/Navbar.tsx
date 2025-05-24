@@ -312,7 +312,7 @@ const Navbar = () => {
                                                     <div
                                                         key={product.id}
                                                         className="p-2 hover:bg-gray-100 cursor-pointer flex items-center border-b border-gray-200"
-                                                        onClick={() => handleProductClick(product.id)}
+                                                        onMouseDown={() => handleProductClick(product.id)}
                                                     >
                                                         <div className="w-12 h-12 relative mr-3 flex-shrink-0">
                                                             {product.images && product.images.length > 0 ? (

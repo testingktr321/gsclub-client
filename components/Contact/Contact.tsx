@@ -8,6 +8,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FaSpinner } from 'react-icons/fa';
+import { Button } from '../ui/button';
 
 type FormValues = {
   email: string;
@@ -55,12 +56,12 @@ const Contact = () => {
       <div className=' w-full flex flex-col-reverse md:flex-row gap-4'>
 
         {/* left side  */}
-        <div className=' w-full md:w-3/12 shadow-4-side p-4 flex flex-col items-center justify-center gap-4 font-plusSans font-normal bg-white'>
+        <div className=' w-full md:w-3/12 shadow-4-side p-4 flex flex-col items-center justify-center gap-4 border border-gray-300 rounded-xl  font-normal bg-white'>
 
           {/* location section  */}
           <div className='flex flex-col justify-center items-center text-center md:-mt-5 mt-0'>
             <div className='w-[50px] h-[50px]'>
-              <Image src={"/location.png"} width={50} height={50} alt='location' className='object-contain w-full h-full' />
+              <Image src={"/images/location.png"} width={50} height={50} alt='location' className='object-contain w-full h-full' />
             </div>
             <p>
               <Link href="https://www.google.com/maps/search/?api=1&query=201+SE+2nd+Ave,+Miami,+FL+33131,+USA" className=' hover:underline' target="_blank" rel="noopener noreferrer" > 201 SE 2nd Ave, <br /> Miami, FL 33131, USA
@@ -68,14 +69,14 @@ const Contact = () => {
             </p>
           </div>
 
-          <hr className=' border w-full' />
+          <hr className=' border border-gray-200 w-full' />
 
           {/* inbox section  */}
           <div className='flex flex-col justify-center items-center text-center'> <div className='w-[50px] h-[50px]'>
-            <Image src={"/email.png"} width={50} height={50} alt='email' className='object-contain w-full h-full' />
+            <Image src={"/images/mail.png"} width={50} height={50} alt='email' className='object-contain w-full h-full' />
           </div>
             <div className='flex flex-col'>
-              <Link href="mailto:info@herbygo.com" className=' hover:underline'> info@herbygo.com </Link>
+              <Link href="mailto:info@itips.com" className=' hover:underline'> info@itips.com </Link>
             </div>
           </div>
 
@@ -94,9 +95,9 @@ const Contact = () => {
         </div>
 
         {/* right side  */}
-        <div className=' w-full shadow-4-side p-8 font-plusSans flex flex-col gap-4 -mt-4 md:mt-0'>
+        <div className=' w-full shadow-4-side p-8 border border-gray-300 rounded-xl flex flex-col gap-4 -mt-4 md:mt-0'>
 
-          <h3 className=' font-plusSans text-[1.5rem] font-semibold'>Say Hello!</h3>
+          <h3 className=' font-plusSans text-[1.5rem] font-medium'>Say Hello!</h3>
 
           <p className=' text-slate w-10/12'>For any inquiries, assistance, or further information, please feel free to reach out to us, and our dedicated team will be delighted to assist you as promptly as possible.</p>
 
@@ -124,7 +125,7 @@ const Contact = () => {
             </div>
 
             <div>
-              <button className='flex bg-green px-[5rem] py-2 rounded-full text-white font-semibold hover:bg-darkGreen transition-all duration-300 ease-in-out hover:scale-100 scale-105'>
+              <Button className=''>
                 {loading ? (
                   <span className="flex items-center gap-2">
                     Sending <FaSpinner className="animate-spin" />
@@ -132,7 +133,7 @@ const Contact = () => {
                 ) : (
                   "Send Message"
                 )}
-              </button>
+              </Button>
             </div>
 
           </form>

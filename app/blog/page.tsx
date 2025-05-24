@@ -2,6 +2,8 @@ import Blog from '@/components/Blog/Blog'
 import { prisma } from '@/lib/prisma'
 import React from 'react'
 
+export const dynamic = 'force-dynamic'
+
 const page = async () => {
   const articles = await prisma.blogArticle.findMany({
     include: {
