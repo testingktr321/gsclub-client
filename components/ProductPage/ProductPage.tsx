@@ -425,10 +425,10 @@ const ProductPage = ({ product }: SingleProductProps) => {
 
             <section className=''>
                 {product.flavorId ? (
-                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} />
+                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} productId={product.id}/>
 
                 ) : (
-                    <RelatedPRoduct brandId={product.brandId} />
+                    <RelatedPRoduct brandId={product.brandId} productId={product.id}/>
                 )}
             </section>
 
