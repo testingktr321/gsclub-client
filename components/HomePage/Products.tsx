@@ -10,6 +10,7 @@ import ProductShimmer from './ProductShimmer';
 import { useFilter } from '@/hooks/useFilter';
 import { Product } from '@/types/product';
 import { useInView } from 'react-intersection-observer';
+import Image from 'next/image';
 
 // interface ApiResponse {
 //     products: Product[];
@@ -145,11 +146,28 @@ const Products = () => {
                         {products.map((product) => (
                             <Link href={`/product/${product.id}`} key={product.id}>
                                 <div className="border-2 border-gray-200 rounded-3xl md:rounded-4xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                                    <div className="aspect-square relative bg-gray-100 h-[42%] md:h-[50%]">
+                                    {/* <div className="aspect-square relative h-[42%] md:h-[50%]">
                                         {product.images.length > 0 ? (
-                                            <img
+                                            <Image
                                                 src={product.images[0].url}
                                                 alt={product.name}
+                                                width={400}
+                                                height={400}
+                                                className="object-contain w-full h-full" // ✅ Changed this
+                                            />
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full">
+                                                <ShoppingBag className="h-10 w-10 text-gray-300" />
+                                            </div>
+                                        )}
+                                    </div> */}
+                                    <div className="aspect-square relative bg-gray-100 h-[16rem] md:h-[32rem] lg:h-[22rem]">
+                                        {product.images.length > 0 ? (
+                                            <Image
+                                                src={product.images[0].url}
+                                                alt={product.name}
+                                                width={400}
+                                                height={400}
                                                 className="object-cover w-full h-full"
                                             />
                                         ) : (
@@ -176,7 +194,7 @@ const Products = () => {
                                             </h3>
                                         </div>
 
-                                        <div className='w-full mb-1.5 -mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
+                                        <div className='w-full mb-1.5 mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
                                             <div>
                                                 <span className="w-full underline">
                                                     View product
@@ -185,7 +203,7 @@ const Products = () => {
                                             {product?.redirectLink && (
                                                 <Button type="submit" className='leading-4 lg:whitespace-nowrap'>
                                                     <Link href={product?.redirectLink || ""}>
-                                                        Shop on GetSmoke
+                                                        Shop Now
                                                     </Link>
                                                 </Button>
                                             )}

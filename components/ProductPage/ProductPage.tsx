@@ -403,7 +403,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                             className="px-8 w-full leading-4 whitespace-nowrap"
                                         >
                                             <Link href={product?.redirectLink || ""}>
-                                                Shop on GetSmoke
+                                                Shop Now
                                             </Link>
                                         </Button>
                                     )}
@@ -425,11 +425,28 @@ const ProductPage = ({ product }: SingleProductProps) => {
 
             <section className=''>
                 {product.flavorId ? (
-                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} />
+                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} productId={product.id}/>
 
                 ) : (
-                    <RelatedPRoduct brandId={product.brandId} />
+                    <RelatedPRoduct brandId={product.brandId} productId={product.id}/>
                 )}
+            </section>
+
+            <section className='w-full -mt-7 md:-mt-10'>
+                <Image
+                    src="/images/rp_banner.png"
+                    width={1000}
+                    height={1000}
+                    alt='banner'
+                    className='w-full h-auto object-cover md:block hidden'
+                />
+                <Image
+                    src="/images/rp_banner2.png"
+                    width={1000}
+                    height={1000}
+                    alt='banner'
+                    className='w-full h-auto object-cover md:hidden block'
+                />
             </section>
         </main>
     );

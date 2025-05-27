@@ -139,13 +139,15 @@ model Flavor {
 }
 
 model Image {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  url       String
-  position  Int?
-  productId String?  @db.ObjectId
-  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  url           String
+  position      Int?
+  productId     String?      @db.ObjectId
+  product       Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  BlogArticle   BlogArticle? @relation(fields: [blogArticleId], references: [id])
+  blogArticleId String?      @db.ObjectId
 
   @@index([productId])
 }
@@ -208,4 +210,23 @@ model Shipment {
   status              String   @default("pending") // "pending", "label_purchased", "shipped", "delivered"
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+}
+
+model BlogArticle {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  subtitle    String   @default("")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  images      Image[]
+}
+
+model Enquiry {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  subject   String
+  inquiry   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

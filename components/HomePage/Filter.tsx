@@ -31,25 +31,33 @@ const Filter = () => {
     const [openDropdown, setOpenDropdown] = useState<string | null>(null)
     const filterRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        const fetchFilterOptions = async () => {
-            try {
-                const response = await fetch('/api/products/filter-options')
-                if (!response.ok) {
-                    throw new Error('Failed to fetch filter options')
-                }
-                const data = await response.json()
-                setFilterOptions(data)
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred')
-            } finally {
-                setLoading(false)
+    const fetchFilterOptions = async () => {
+        try {
+            setLoading(true);
+            const params = new URLSearchParams();
+            if (brandId) params.append('brandId', brandId);
+            if (flavorId) params.append('flavorId', flavorId);
+            if (puffsId) params.append('puffsId', puffsId);
+            if (nicotineId) params.append('nicotineId', nicotineId);
+
+            const response = await fetch(`/api/products/filter-options?${params.toString()}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch filter options');
             }
+            const data = await response.json();
+            setFilterOptions(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        } finally {
+            setLoading(false);
         }
+    }
 
-        fetchFilterOptions()
-    }, [])
+    useEffect(() => {
+        fetchFilterOptions();
+    }, [brandId, flavorId, puffsId, nicotineId]);
 
+    // Rest of your component remains the same...
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

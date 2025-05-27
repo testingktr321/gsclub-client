@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import { ShoppingBag } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
+import Image from 'next/image';
 
 // interface ApiResponse {
 //     products: Product[];
@@ -18,9 +19,10 @@ import { useInView } from 'react-intersection-observer';
 interface RelatedProductProps {
     brandId: string;
     flavorId?: string;
+    productId: string;
 }
 
-const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
+const RelatedPRoduct = ({ brandId, flavorId, productId }: RelatedProductProps) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -82,6 +84,10 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
         }
     }, [inView, hasMore, loading]);
 
+    const filteredProducts = products.filter(
+        (product: Product) => product.id !== productId
+    );
+
     if (loading && page === 1) {
         return (
             <div className='mt-2 md:pt-8'>
@@ -106,7 +112,7 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
             <div className='bg-black h-[2px] mb-7 md:mb-10 rounded-full'></div>
             <h2 className='text-center text-xl md:text-2xl font-semibold mb-7 md:mb-10'>Related products</h2>
 
-            {products.length === 0 ? (
+            {filteredProducts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
                     <ShoppingBag className="h-12 w-12 text-gray-400" />
                     <h3 className="text-lg font-medium text-gray-900">
@@ -116,14 +122,16 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
             ) : (
                 <>
                     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 xl:gap-10">
-                        {products.map((product) => (
+                        {filteredProducts.map((product) => (
                             <Link href={`/product/${product.id}`} key={`${product.id}-${page}`}>
                                 <div className="border-2 border-gray-200 rounded-3xl md:rounded-4xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                                    <div className="aspect-square relative bg-gray-100 h-[42%] md:h-[50%]">
+                                    <div className="aspect-square relative bg-gray-100 h-[16rem] md:h-[32rem] lg:h-[22rem]">
                                         {product.images.length > 0 ? (
-                                            <img
+                                            <Image
                                                 src={product.images[0].url}
                                                 alt={product.name}
+                                                width={400}
+                                                height={400}
                                                 className="object-cover w-full h-full"
                                             />
                                         ) : (
@@ -148,7 +156,7 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
                                             </h3>
                                         </div>
 
-                                        <div className='w-full mb-1.5 -mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
+                                        <div className='w-full mb-1.5 mt-2 md:px-5 flex flex-col items-center justify-center gap-3 text-xs md:text-base text-center'>
                                             <div>
                                                 <span className="w-full underline">
                                                     View product
@@ -157,7 +165,7 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
                                             {product?.redirectLink && (
                                                 <Button type="submit" className='leading-4 lg:whitespace-nowrap'>
                                                     <Link href={product?.redirectLink || ""}>
-                                                        Shop on GetSmoke
+                                                        Shop Now
                                                     </Link>
                                                 </Button>
                                             )}
@@ -175,7 +183,7 @@ const RelatedPRoduct = ({ brandId, flavorId }: RelatedProductProps) => {
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                             </div>
                         )}
-                        {!hasMore && products.length > 0 && (
+                        {!hasMore && filteredProducts.length > 0 && (
                             <p className="text-center text-gray-500 py-4">
                                 You&apos;ve seen all related products
                             </p>

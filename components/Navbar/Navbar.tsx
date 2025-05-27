@@ -136,6 +136,7 @@ const Navbar = () => {
             const target = event.target as HTMLElement;
             if (!target.closest('.search-container')) {
                 setShowResults(false);
+                setSearchQuery(''); // Add this line to clear the search text
             }
         };
 
@@ -145,15 +146,30 @@ const Navbar = () => {
         };
     }, []);
 
+    // Add this useEffect hook to clear search on scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            if (searchQuery.trim() && showResults) {
+                setSearchQuery('');
+                setShowResults(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [searchQuery, showResults]);
+
     const navItems = [
         { title: "Main", href: "/" },
-        { title: "Vapes", href: "/" },
-        { title: "Hookah", href: "/" },
-        { title: "Supplements", href: "/" },
-        { title: "Adults goods", href: "/" },
-        { title: "Accessories", href: "/" },
-        { title: "Blog", href: "/" },
-        { title: "Contact us", href: "/" },
+        { title: "Vapes", href: "/vapes" },
+        { title: "Hookah", href: "/hookah" },
+        { title: "Supplements", href: "/supplements" },
+        { title: "Adults goods", href: "/adults-goods" },
+        { title: "Accessories", href: "/accessories" },
+        { title: "Blog", href: "/blog" },
+        { title: "Contact us", href: "/contact" },
     ];
 
     const handleProductClick = (productId: string) => {
@@ -216,7 +232,11 @@ const Navbar = () => {
                                         if (searchQuery.trim()) setShowResults(true);
                                         setIsSearchFocused(true);
                                     }}
-                                    onBlur={() => setIsSearchFocused(false)}
+                                    onBlur={() => {
+                                        setIsSearchFocused(false);
+                                        setSearchQuery(''); // Add this line to clear on blur
+                                        setShowResults(false);
+                                    }}
                                     className="hidden md:block border-white md:border-black border focus:border rounded-full py-1 px-3 pl-8 focus:outline-none focus:ring-2 focus:ring-[#8C14AC] focus:border-transparent"
                                     initial={{ width: "10rem" }}
                                     animate={{
@@ -292,7 +312,7 @@ const Navbar = () => {
                                                     <div
                                                         key={product.id}
                                                         className="p-2 hover:bg-gray-100 cursor-pointer flex items-center border-b border-gray-200"
-                                                        onClick={() => handleProductClick(product.id)}
+                                                        onMouseDown={() => handleProductClick(product.id)}
                                                     >
                                                         <div className="w-12 h-12 relative mr-3 flex-shrink-0">
                                                             {product.images && product.images.length > 0 ? (
