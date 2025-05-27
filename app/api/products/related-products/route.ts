@@ -134,9 +134,14 @@ export async function GET(req: Request) {
       },
       skip,
       take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: [
+        {
+          packCount: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
     });
 
     // Transform the productPuffs data to a more usable format if needed
