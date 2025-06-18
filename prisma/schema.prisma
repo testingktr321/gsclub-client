@@ -230,3 +230,27 @@ model Enquiry {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model SeoPage {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Page identification
+  slug String @unique // e.g., "/", "/about", "/contact"
+
+  // Basic SEO (most important)
+  title       String?
+  description String?
+  keywords    String[]
+
+  // Social sharing (optional but recommended)
+  ogTitle       String?
+  ogDescription String?
+  ogImage       String?
+
+  // Management
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("seo_pages")
+}
