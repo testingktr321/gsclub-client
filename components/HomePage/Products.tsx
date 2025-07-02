@@ -30,6 +30,9 @@ const Products = () => {
   // Track previous filter values to detect when filters actually change
   const prevFiltersRef = React.useRef({ brandId, flavorId, puffsId, nicotineId });
 
+  // Ref for scrolling to top of component
+  const componentRef = React.useRef<HTMLElement>(null);
+
   // Function to fetch products
   const fetchProducts = async () => {
     const url = "/api/products?";
@@ -81,6 +84,16 @@ const Products = () => {
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  // Scroll to top when page changes
+  React.useEffect(() => {
+    if (componentRef.current) {
+      componentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // Fallback to window scroll if ref is not available
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage]);
+
   if (isLoading && currentPage === 1) {
     return <div className="w-11/12 mx-auto">
       <ProductShimmer />;
@@ -102,7 +115,7 @@ const Products = () => {
   const totalPages = data?.totalPages || 1;
 
   return (
-    <section className="bg-white text-black font-unbounded w-11/12 mx-auto pb-16">
+    <section ref={componentRef} className="bg-white text-black font-unbounded w-11/12 mx-auto pb-16">
       {products.length === 0 && !isLoading ? (
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
           <ShoppingBag className="h-12 w-12 text-gray-400" />
