@@ -7,6 +7,7 @@ interface FilterState {
   nicotineId?: string;
   setFilters: (newFilters: Partial<FilterState>) => void;
   clearFilters: () => void;
+  removeFilter: (filterName: keyof Omit<FilterState, 'setFilters' | 'clearFilters' | 'removeFilter'>) => void;
 }
 
 export const useFilter = create<FilterState>((set) => ({
@@ -24,4 +25,7 @@ export const useFilter = create<FilterState>((set) => ({
       puffsId: undefined,
       nicotineId: undefined,
     }),
+    
+  removeFilter: (filterName) => 
+    set((state) => ({ ...state, [filterName]: undefined })),
 }));
