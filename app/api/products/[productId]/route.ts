@@ -12,6 +12,7 @@ export async function GET(
         id: params.productId,
       },
       include: {
+        Review:true,
         images: {
           orderBy: {
             position: "asc",
