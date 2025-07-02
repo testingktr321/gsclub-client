@@ -14,10 +14,10 @@ import Loading from "./loading";
 import Faq from "./Faq";
 import { useDeleteReview } from "./useReview";
 import { Edit, X } from "lucide-react";
-import { Modal } from "@mui/material";
 import StarRating from "../ui/StarRating";
 import ReviewForm from "./ReviewForm";
 import { useSession } from "next-auth/react";
+import Modal from "../ui/modal";
 
 // import { toast } from 'react-hot-toast';
 
@@ -102,12 +102,12 @@ interface SingleProductProps {
 // };
 
 const ProductPage = ({ productId }: SingleProductProps) => {
-  const { data: product, isLoading, error } = useProduct(productId);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const { data: session } = useSession();
-  const [showAllReviews, setShowAllReviews] = useState(false);
-  const { mutate: deleteReview } = useDeleteReview();
-  const [isOpen, setIsOpen] = useState(false);
+    const { data: product, isLoading, error } = useProduct(productId);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const { data: session } = useSession();
+    const [showAllReviews, setShowAllReviews] = useState(false);
+    const { mutate: deleteReview } = useDeleteReview();
+    const [isOpen, setIsOpen] = useState(false);
 
     // const { data: session } = useSession();
     // const email = session?.user.email || "";
@@ -315,100 +315,99 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                             {hasSingleFlavor && product.flavor?.name}
                         </h1>
 
-            {/* Price */}
-            <div className="flex items-center gap-4">
-              <span className="text-2xl font-medium">
-                ${product.currentPrice.toFixed(2)}
-              </span>
-              {product.originalPrice && (
-                <span className="text-lg text-gray-500 line-through">
-                  ${product.originalPrice.toFixed(2)}
-                </span>
-              )}
-              {product.packCount > 1 && (
-                <span>
-                  (each pack $
-                  {(product.currentPrice / product.packCount).toFixed(2)})
-                </span>
-              )}
-            </div>
+                        {/* Price */}
+                        <div className="flex items-center gap-4">
+                            <span className="text-2xl font-medium">
+                                ${product.currentPrice.toFixed(2)}
+                            </span>
+                            {product.originalPrice && (
+                                <span className="text-lg text-gray-500 line-through">
+                                    ${product.originalPrice.toFixed(2)}
+                                </span>
+                            )}
+                            {product.packCount > 1 && (
+                                <span>
+                                    (each pack $
+                                    {(product.currentPrice / product.packCount).toFixed(2)})
+                                </span>
+                            )}
+                        </div>
 
-            {product.detailDescription && (
-              <>
-                <div className="flex flex-col gap-3">
-                  <p className="font-bold text-xl text-[#0C0B0B]">
-                    Description:
-                  </p>
-                  <div
-                    className="prose max-w-none"
-                    dangerouslySetInnerHTML={{
-                      __html: product.detailDescription,
-                    }}
-                  />
-                </div>
-              </>
-            )}
+                        {product.detailDescription && (
+                            <>
+                                <div className="flex flex-col gap-3">
+                                    <p className="font-bold text-xl text-[#0C0B0B]">
+                                        Description:
+                                    </p>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: product.detailDescription,
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        )}
 
-            {/* Product Specifications */}
-            <div className="space-y-3">
-              <button
-                className="flex items-center gap-2 font-bold text-xl text-[#0C0B0B]"
-                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-              >
-                Device Details
-                <svg
-                  className={`w-5 h-5 transition-transform ${
-                    isDetailsOpen ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {isDetailsOpen && (
-                <div className="space-y-1.5">
-                  {product.Nicotine &&
-                    renderField("Nicotine Strength", product.Nicotine.name)}
-                  {product.productPuffs && product.productPuffs.length > 0 && (
-                    <div className="flex">
-                      <p className="font-medium">Puffs:</p>
-                      <p className="ml-2">
-                        {product.productPuffs.map((pp, index) => (
-                          <span key={index}>
-                            {index > 0 && " / "}
-                            {pp.puffs.name} {pp.puffDesc}
-                          </span>
-                        ))}
-                      </p>
-                    </div>
-                  )}
-                  {renderField("E-liquid Content", product.eLiquidContent)}
-                  {renderField("Battery Capacity", product.batteryCapacity)}
-                  {renderField("Coil", product.coil)}
-                  {renderField("Firing Mechanism", product.firingMechanism)}
-                  {renderField("Type", product.type)}
-                  {renderField("Resistance", product.resistance)}
-                  {renderField("Power Range", product.powerRange)}
-                  {renderField("Charging", product.charging)}
-                  {product.extra && (
-                    <div className="flex">
-                      <p className="font-medium">Extra Features:</p>
-                      <div
-                        className="prose max-w-none ml-2"
-                        dangerouslySetInnerHTML={{ __html: product.extra }}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+                        {/* Product Specifications */}
+                        <div className="space-y-3">
+                            <button
+                                className="flex items-center gap-2 font-bold text-xl text-[#0C0B0B]"
+                                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+                            >
+                                Device Details
+                                <svg
+                                    className={`w-5 h-5 transition-transform ${isDetailsOpen ? "rotate-180" : ""
+                                        }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </button>
+                            {isDetailsOpen && (
+                                <div className="space-y-1.5">
+                                    {product.Nicotine &&
+                                        renderField("Nicotine Strength", product.Nicotine.name)}
+                                    {product.productPuffs && product.productPuffs.length > 0 && (
+                                        <div className="flex">
+                                            <p className="font-medium">Puffs:</p>
+                                            <p className="ml-2">
+                                                {product.productPuffs.map((pp, index) => (
+                                                    <span key={index}>
+                                                        {index > 0 && " / "}
+                                                        {pp.puffs.name} {pp.puffDesc}
+                                                    </span>
+                                                ))}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {renderField("E-liquid Content", product.eLiquidContent)}
+                                    {renderField("Battery Capacity", product.batteryCapacity)}
+                                    {renderField("Coil", product.coil)}
+                                    {renderField("Firing Mechanism", product.firingMechanism)}
+                                    {renderField("Type", product.type)}
+                                    {renderField("Resistance", product.resistance)}
+                                    {renderField("Power Range", product.powerRange)}
+                                    {renderField("Charging", product.charging)}
+                                    {product.extra && (
+                                        <div className="flex">
+                                            <p className="font-medium">Extra Features:</p>
+                                            <div
+                                                className="prose max-w-none ml-2"
+                                                dangerouslySetInnerHTML={{ __html: product.extra }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
 
                         {/* Flavor Selection for Packs */}
                         {/* {hasMultipleFlavors && availableFlavors.length > 0 && (
@@ -497,127 +496,127 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                 </div>
             </section>
 
-      {/*------------------- Review section --------------------- */}
+            {/*------------------- Review section --------------------- */}
 
-      <section className="w-11/12 mx-auto mt-10 font-unbounded">
-        <div className="bg-black h-[2.5px] mb-7 md:mb-10 rounded-full"></div>
-        <h2 className="text-center text-xl md:text-2xl font-semibold mb-7 md:mb-10">
-          Product Reviews
-        </h2>
+            <section className="w-11/12 mx-auto mt-10 font-unbounded">
+                <div className="bg-black h-[2.5px] mb-7 md:mb-10 rounded-full"></div>
+                <h2 className="text-center text-xl md:text-2xl font-semibold mb-7 md:mb-10">
+                    Product Reviews
+                </h2>
 
-        <div className="mb-8">
-          <Button onClick={() => setIsOpen(true)} variant="secondary">
-            <Edit className="mr-2" size={16} />
-            Write a Review
-          </Button>
-        </div>
+                <div className="mb-8">
+                    <Button onClick={() => setIsOpen(true)} variant="secondary">
+                        <Edit className="mr-2" size={16} />
+                        Write a Review
+                    </Button>
+                </div>
 
-        <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-          <div className="p-4">
-            <ReviewForm
-              productId={productId}
-              onSuccess={() => setIsOpen(false)}
-            />
-          </div>
-        </Modal>
-
-        <div className="space-y-6">
-          {product?.Review.length > 0 ? (
-            <>
-              {(showAllReviews
-                ? product.Review
-                : product.Review.slice(0, 3)
-              ).map((review) => (
-                <div key={review.id} className="border-b pb-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold">{review.userName}</h3>
-                      <div className="flex items-center gap-2 my-1">
-                        <StarRating
-                          rating={review.rating}
-                          setRating={() => {}}
-                          readOnly
+                <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
+                    <div className="p-4">
+                        <ReviewForm
+                            productId={productId}
+                            onSuccess={() => setIsOpen(false)}
                         />
-                        <span className="text-sm text-gray-500">
-                          {format(new Date(review.createdAt), "MMMM d, yyyy")}
-                        </span>
-                      </div>
-                      <h4 className="font-medium mt-1">{review.title}</h4>
-                      <p className="text-gray-700 mt-1">{review.comment}</p>
                     </div>
+                </Modal>
 
-                    {session?.user?.email === review.userEmail && (
-                      <button
-                        onClick={() =>
-                          deleteReview({
-                            reviewId: review.id,
-                            userEmail: review.userEmail,
-                            productId: product.id,
-                          })
-                        }
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <X size={18} />
-                      </button>
+                <div className="space-y-6">
+                    {product?.Review.length > 0 ? (
+                        <>
+                            {(showAllReviews
+                                ? product.Review
+                                : product.Review.slice(0, 3)
+                            ).map((review) => (
+                                <div key={review.id} className="border-b pb-4">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-semibold">{review.userName}</h3>
+                                            <div className="flex items-center gap-2 my-1">
+                                                <StarRating
+                                                    rating={review.rating}
+                                                    setRating={() => { }}
+                                                    readOnly
+                                                />
+                                                <span className="text-sm text-gray-500">
+                                                    {format(new Date(review.createdAt), "MMMM d, yyyy")}
+                                                </span>
+                                            </div>
+                                            <h4 className="font-medium mt-1">{review.title}</h4>
+                                            <p className="text-gray-700 mt-1">{review.comment}</p>
+                                        </div>
+
+                                        {session?.user?.email === review.userEmail && (
+                                            <button
+                                                onClick={() =>
+                                                    deleteReview({
+                                                        reviewId: review.id,
+                                                        userEmail: review.userEmail,
+                                                        productId: product.id,
+                                                    })
+                                                }
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                <X size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+
+                            {product.Review.length > 3 && !showAllReviews && (
+                                <div className="text-center mt-4">
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => setShowAllReviews(true)}
+                                    >
+                                        See All Reviews ({product.Review.length})
+                                    </Button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="text-center py-8">
+                            <p className="text-gray-500">
+                                No reviews yet. Be the first to review!
+                            </p>
+                        </div>
                     )}
-                  </div>
                 </div>
-              ))}
+            </section>
+            <section className="">
+                {product.flavorId ? (
+                    <RelatedPRoduct
+                        brandId={product.brandId}
+                        flavorId={product.flavorId}
+                        productId={product.id}
+                    />
+                ) : (
+                    <RelatedPRoduct brandId={product.brandId} productId={product.id} />
+                )}
+            </section>
 
-              {product.Review.length > 3 && !showAllReviews && (
-                <div className="text-center mt-4">
-                  <Button
-                    variant="secondary"
-                    onClick={() => setShowAllReviews(true)}
-                  >
-                    See All Reviews ({product.Review.length})
-                  </Button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500">
-                No reviews yet. Be the first to review!
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-      <section className="">
-        {product.flavorId ? (
-          <RelatedPRoduct
-            brandId={product.brandId}
-            flavorId={product.flavorId}
-            productId={product.id}
-          />
-        ) : (
-          <RelatedPRoduct brandId={product.brandId} productId={product.id} />
-        )}
-      </section>
+            <section className="-mt-4 mb-28">
+                <Faq />
+            </section>
 
-      <section className="-mt-4 mb-28">
-        <Faq />
-      </section>
-
-      <section className="w-full -mt-7 md:-mt-10">
-        <Image
-          src="/images/rp_banner.png"
-          width={1000}
-          height={1000}
-          alt="banner"
-          className="w-full h-auto object-cover md:block hidden"
-        />
-        <Image
-          src="/images/rp_banner2.png"
-          width={1000}
-          height={1000}
-          alt="banner"
-          className="w-full h-auto object-cover md:hidden block"
-        />
-      </section>
-    </main>
-  );
+            <section className="w-full -mt-7 md:-mt-10">
+                <Image
+                    src="/images/rp_banner.png"
+                    width={1000}
+                    height={1000}
+                    alt="banner"
+                    className="w-full h-auto object-cover md:block hidden"
+                />
+                <Image
+                    src="/images/rp_banner2.png"
+                    width={1000}
+                    height={1000}
+                    alt="banner"
+                    className="w-full h-auto object-cover md:hidden block"
+                />
+            </section>
+        </main>
+    );
 };
 
 export default ProductPage;
