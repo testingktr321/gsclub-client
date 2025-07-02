@@ -132,7 +132,7 @@ const CartPage = () => {
             isInitialMount.current = false;
             fetchProducts();
         }
-    }, [items]);
+    }, [products,items]);
 
     const hasNewItemIds = (items: CartItem[], products: Product[]) => {
         if (items.length === 0) return false;
@@ -178,7 +178,7 @@ const CartPage = () => {
                                             <th className="p-4 font-light text-left">PRICE</th>
                                             <th className="p-4 font-light text-left">QUANTITY</th>
                                             <th className="p-4 font-light text-left">SUBTOTAL</th>
-                                            <th className="p-4"></th>
+                                            <th className="p-4">{""}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
