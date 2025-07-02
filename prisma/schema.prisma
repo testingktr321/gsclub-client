@@ -77,6 +77,7 @@ model Product {
   //new feild 
   redirectLink String?
   OrderItem    OrderItem[]
+  Review       Review[]
 }
 
 model ProductFlavors {
@@ -136,6 +137,19 @@ model Flavor {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   ProductFlavors ProductFlavors[]
+}
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userEmail String
+  userName  String
+  rating    Int
+  title     String
+  comment   String
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Image {

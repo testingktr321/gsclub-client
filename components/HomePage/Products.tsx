@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -17,69 +17,59 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { useQuery } from "@tanstack/react-query";
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(1);
   const { brandId, flavorId, puffsId, nicotineId } = useFilter();
-
-  // Pagination hooks
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const currentPage = Number(searchParams.get("page")) || 1;
   const limit = 24; // Items per page
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      const url = "/api/products?";
+  // Function to fetch products
+  const fetchProducts = async () => {
+    const url = "/api/products?";
+    const params = new URLSearchParams();
+    if (brandId) params.append("brandId", brandId);
+    if (flavorId) params.append("flavorId", flavorId);
+    if (puffsId) params.append("puffsId", puffsId);
+    if (nicotineId) params.append("nicotineId", nicotineId);
+    params.append("page", currentPage.toString());
+    params.append("limit", limit.toString());
 
-      // Add filter parameters
-      const params = new URLSearchParams();
-      if (brandId) params.append("brandId", brandId);
-      if (flavorId) params.append("flavorId", flavorId);
-      if (puffsId) params.append("puffsId", puffsId);
-      if (nicotineId) params.append("nicotineId", nicotineId);
+    const response = await fetch(url + params.toString());
+    if (!response.ok) throw new Error("Failed to fetch products");
+    return response.json();
+  };
 
-      // Add pagination
-      params.append("page", currentPage.toString());
-      params.append("limit", limit.toString());
+  // TanStack Query hook
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["products", brandId, flavorId, puffsId, nicotineId, currentPage],
+    queryFn: fetchProducts,
+  });
 
-      const response = await fetch(url + params.toString());
-      if (!response.ok) throw new Error("Failed to fetch products");
-
-      const data = await response.json();
-      setProducts(data.products);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    // Only reset if the current page is not already 1 to avoid unnecessary redirects
+    if (currentPage !== 1) {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      router.replace(`${pathname}?${params.toString()}`);
     }
-  }, [brandId, flavorId, puffsId, nicotineId, currentPage, limit]);
+  }, [brandId, flavorId, puffsId, nicotineId]); // Only include filter dependencies
 
-  useEffect(() => {
-    // Reset to page 1 when filters change
-    const params = new URLSearchParams(searchParams);
-    params.set("page", "1");
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [brandId, flavorId, puffsId, nicotineId]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
+  // Handle page change
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", newPage.toString());
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  if (loading && currentPage === 1) {
-    return <ProductShimmer />;
+  if (isLoading && currentPage === 1) {
+    return <div className="w-11/12 mx-auto">
+      <ProductShimmer />;
+    </div>
   }
 
   if (error) {
@@ -87,15 +77,18 @@ const Products = () => {
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-red-500 bg-red-100 p-4 rounded-md">
           <p className="font-semibold">Error loading products</p>
-          <p>{error}</p>
+          <p>{error.message}</p>
         </div>
       </div>
     );
   }
 
+  const products = data?.products || [];
+  const totalPages = data?.totalPages || 1;
+
   return (
     <section className="bg-white text-black font-unbounded w-11/12 mx-auto pb-16">
-      {products.length === 0 && !loading ? (
+      {products.length === 0 && !isLoading ? (
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
           <ShoppingBag className="h-12 w-12 text-gray-400" />
           <h3 className="text-lg font-medium text-gray-900">
@@ -109,12 +102,11 @@ const Products = () => {
         </div>
       ) : (
         <>
-          {/* Show shimmer when loading new page */}
-          {loading ? (
+          {isLoading ? (
             <ProductShimmer />
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 xl:gap-10">
-              {products.map((product) => (
+              {products.map((product: Product) => (
                 <div
                   onClick={() => {
                     router.push(`/product/${product.id}`);
@@ -236,7 +228,6 @@ const Products = () => {
                         pageNum = currentPage - 1 + i;
                       }
 
-                      // Don't show pages beyond totalPages or below 2
                       if (pageNum > 1 && pageNum < totalPages) {
                         return (
                           <PaginationItem key={pageNum}>

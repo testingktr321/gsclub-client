@@ -4,7 +4,7 @@ import React from 'react';
 const ProductShimmer = () => {
     return (
         <div className="bg-white text-black font-unbounded">
-            <div className='w-11/12 mx-auto'>
+            <div className=''>
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 xl:gap-10 pb-14">
                     {[...Array(8)].map((_, index) => (
                         <div key={index} className="border-2 border-gray-200 rounded-4xl overflow-hidden shadow-sm flex flex-col h-full">
