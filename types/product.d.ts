@@ -53,7 +53,6 @@ interface ReviewProps{
   title: string;
   comment: string;
   productId: string;
-  product: Product; // Assuming you have a Product interface defined
   createdAt: Date;
   updatedAt: Date;
 }
