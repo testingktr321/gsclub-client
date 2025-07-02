@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         // Fetch product data
         const product = await prisma.product.findUnique({
             where: { id: productId },
-            select: { name: true }, 
+            select: { name: true },
         });
 
         // Fetch SEO data from the database for the product page route
@@ -124,7 +124,7 @@ const page = async ({ params }: Props) => {
             })),
         };
 
-        return <ProductPage product={transformedProduct} />;
+        return <ProductPage productId={productId} />;
     } catch (error) {
         console.error('Failed to fetch product:', error);
         return notFound();
