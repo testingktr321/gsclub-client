@@ -45,6 +45,19 @@ interface ProductPuffs {
   puffs: Puffs;
 }
 
+interface ReviewProps{
+  id: string;
+  userEmail: string;
+  userName: string;
+  rating: number;
+  title: string;
+  comment: string;
+  productId: string;
+  product: Product; // Assuming you have a Product interface defined
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // New interface for the ProductFlavors relation
 export interface ProductFlavors {
   id: string;
@@ -57,6 +70,7 @@ export interface ProductFlavors {
 export interface Product {
   id: string;
   name: string;
+  Review:ReviewProps[]
   currentPrice: number;
   originalPrice: number;
   // Optional fields

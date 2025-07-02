@@ -15,6 +15,7 @@ export async function GET(req: NextRequest, { params }: Props) {
         id: productId,
       },
       include: {
+        Review:true,
         images: {
           orderBy: {
             position: "asc",
