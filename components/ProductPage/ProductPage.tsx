@@ -9,10 +9,12 @@ import { Product } from '@/types/product';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import RelatedPRoduct from './RelatedPRoduct';
+import { useProduct } from './useProduct';
+import Loading from './loading';
 // import { toast } from 'react-hot-toast';
 
 interface SingleProductProps {
-    product: Product | null;
+    productId: string;
 }
 
 // const CustomDropdown = ({
@@ -91,7 +93,9 @@ interface SingleProductProps {
 //     );
 // };
 
-const ProductPage = ({ product }: SingleProductProps) => {
+const ProductPage = ({ productId }: SingleProductProps) => {
+    const { data: product, isLoading, error } = useProduct(productId);
+
     // const { data: session } = useSession();
     // const email = session?.user.email || "";
     // const cart = useCart();
@@ -100,6 +104,25 @@ const ProductPage = ({ product }: SingleProductProps) => {
     const router = useRouter();
     // const [selectedFlavors, setSelectedFlavors] = useState<{ [key: number]: string }>({});
     // const [availableFlavors, setAvailableFlavors] = useState<{ id: string, name: string }[]>([]);
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <Loading />
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-red-500 bg-red-100 p-4 rounded-md">
+                    <p className="font-semibold">Error loading product</p>
+                    <p className="text-sm mt-1">{error.message}</p>
+                </div>
+            </div>
+        );
+    }
 
     const hasMultipleFlavors = product?.productFlavors && product.productFlavors.length > 0;
     const hasSingleFlavor = product?.flavorId && !hasMultipleFlavors;
@@ -425,10 +448,10 @@ const ProductPage = ({ product }: SingleProductProps) => {
 
             <section className=''>
                 {product.flavorId ? (
-                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} productId={product.id}/>
+                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} productId={product.id} />
 
                 ) : (
-                    <RelatedPRoduct brandId={product.brandId} productId={product.id}/>
+                    <RelatedPRoduct brandId={product.brandId} productId={product.id} />
                 )}
             </section>
 
