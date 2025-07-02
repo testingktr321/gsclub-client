@@ -27,6 +27,9 @@ const Products = () => {
   const currentPage = Number(searchParams.get("page")) || 1;
   const limit = 24; // Items per page
 
+  // Track previous filter values to detect when filters actually change
+  const prevFiltersRef = React.useRef({ brandId, flavorId, puffsId, nicotineId });
+
   // Function to fetch products
   const fetchProducts = async () => {
     const url = "/api/products?";
@@ -49,15 +52,27 @@ const Products = () => {
     queryFn: fetchProducts,
   });
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 only when filters actually change (not when page changes)
   React.useEffect(() => {
-    // Only reset if the current page is not already 1 to avoid unnecessary redirects
-    if (currentPage !== 1) {
+    const prevFilters = prevFiltersRef.current;
+    const currentFilters = { brandId, flavorId, puffsId, nicotineId };
+
+    // Check if any filter has actually changed
+    const filtersChanged =
+      prevFilters.brandId !== currentFilters.brandId ||
+      prevFilters.flavorId !== currentFilters.flavorId ||
+      prevFilters.puffsId !== currentFilters.puffsId ||
+      prevFilters.nicotineId !== currentFilters.nicotineId;
+
+    if (filtersChanged && currentPage !== 1) {
       const params = new URLSearchParams(searchParams);
       params.set("page", "1");
       router.replace(`${pathname}?${params.toString()}`);
     }
-  }, [brandId, flavorId, puffsId, nicotineId, currentPage, pathname, router, searchParams]); // Include all referenced dependencies
+
+    // Update the ref with current filter values
+    prevFiltersRef.current = currentFilters;
+  }, [brandId, flavorId, puffsId, nicotineId, currentPage, pathname, router, searchParams]);
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
