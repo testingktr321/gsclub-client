@@ -2,9 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { useFilter } from "@/hooks/useFilter";
-import { Button } from "../ui/button";
-
-// heell
 
 interface FilterOption {
   id: string;

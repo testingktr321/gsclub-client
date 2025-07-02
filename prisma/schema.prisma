@@ -268,3 +268,20 @@ model SeoPage {
 
   @@map("seo_pages")
 }
+
+model Faq {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  pageSlug  String
+  faqs      FaqItem[]
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("faqs")
+}
+
+type FaqItem {
+  question String
+  answer   String
+  order    Int    @default(0)
+}

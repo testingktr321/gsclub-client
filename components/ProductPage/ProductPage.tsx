@@ -5,12 +5,12 @@ import { Button } from '../ui/button';
 // import { FaChevronDown } from 'react-icons/fa';
 // import { useSession } from 'next-auth/react';
 // import useCart from '@/hooks/useCart';
-import { Product } from '@/types/product';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import RelatedPRoduct from './RelatedPRoduct';
 import { useProduct } from './useProduct';
 import Loading from './loading';
+import Faq from './Faq';
 // import { toast } from 'react-hot-toast';
 
 interface SingleProductProps {
@@ -453,6 +453,10 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                 ) : (
                     <RelatedPRoduct brandId={product.brandId} productId={product.id} />
                 )}
+            </section>
+
+            <section className='-mt-4 mb-28'>
+                <Faq />
             </section>
 
             <section className='w-full -mt-7 md:-mt-10'>
