@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { useFilter } from "@/hooks/useFilter";
 
@@ -61,7 +61,7 @@ const Filter = () => {
     },
   ].filter((filter) => filter.id);
 
-  const fetchFilterOptions = async () => {
+  const fetchFilterOptions = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -85,11 +85,11 @@ const Filter = () => {
     } finally {
       setLoading(false);
     }
-  };
+  },[ brandId, flavorId, puffsId, nicotineId]);
 
   useEffect(() => {
     fetchFilterOptions();
-  }, [brandId, flavorId, puffsId, nicotineId]);
+  }, [brandId, flavorId,fetchFilterOptions, puffsId, nicotineId]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

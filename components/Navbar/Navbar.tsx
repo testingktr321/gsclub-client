@@ -107,9 +107,9 @@ const Navbar = () => {
 
     // Debounced search handler
     const debouncedSearch = useCallback(
-        debounce((query: string) => {
-            searchProducts(query);
-        }, 500),
+        ((query: string) => {
+            debounce((q: string) => searchProducts(q), 500)(query);
+        }),
         []
     );
 
