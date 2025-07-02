@@ -90,4 +90,5 @@ export interface Product {
   updatedAt: Date;
   redirectLink: string | null;
   packCount: number;
+  detailDescription: string | null;
 }

@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '../ui/button';
 // import { FaChevronDown } from 'react-icons/fa';
 // import { useSession } from 'next-auth/react';
@@ -95,6 +95,7 @@ interface SingleProductProps {
 
 const ProductPage = ({ productId }: SingleProductProps) => {
     const { data: product, isLoading, error } = useProduct(productId);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
     // const { data: session } = useSession();
     // const email = session?.user.email || "";
@@ -318,43 +319,69 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                             )}
                         </div>
 
+                        {product.detailDescription && (
+                            <>
+                                <div className="flex flex-col gap-3">
+                                    <p className="font-bold text-xl text-[#0C0B0B]">Description:</p>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: product.detailDescription }}
+                                    />
+                                </div>
+                            </>
+                        )}
+
                         {/* Product Specifications */}
                         <div className="space-y-3">
-                            <h2 className="font-bold text-xl text-[#0C0B0B]">Device Details:</h2>
-                            <div className="space-y-1.5">
-                                {product.Nicotine && renderField("Nicotine Strength", product.Nicotine.name)}
-                                {product.productPuffs && product.productPuffs.length > 0 && (
-                                    <div className="flex">
-                                        <p className="font-medium">Puffs:</p>
-                                        <p className="ml-2">
-                                            {product.productPuffs.map((pp, index) => (
-                                                <span key={index}>
-                                                    {index > 0 && ' / '}
-                                                    {pp.puffs.name} {pp.puffDesc}
-                                                </span>
-                                            ))}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {renderField("E-liquid Content", product.eLiquidContent)}
-                                {renderField("Battery Capacity", product.batteryCapacity)}
-                                {renderField("Coil", product.coil)}
-                                {renderField("Firing Mechanism", product.firingMechanism)}
-                                {renderField("Type", product.type)}
-                                {renderField("Resistance", product.resistance)}
-                                {renderField("Power Range", product.powerRange)}
-                                {renderField("Charging", product.charging)}
-                                {product.extra && (
-                                    <div className='flex'>
-                                        <p className="font-medium">Extra Features:</p>
-                                        <div
-                                            className="prose max-w-none ml-2"
-                                            dangerouslySetInnerHTML={{ __html: product.extra }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
+                            <button
+                                className="flex items-center gap-2 font-bold text-xl text-[#0C0B0B]"
+                                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+                            >
+                                Device Details
+                                <svg
+                                    className={`w-5 h-5 transition-transform ${isDetailsOpen ? 'rotate-180' : ''}`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            {isDetailsOpen && (
+                                <div className="space-y-1.5">
+                                    {product.Nicotine && renderField("Nicotine Strength", product.Nicotine.name)}
+                                    {product.productPuffs && product.productPuffs.length > 0 && (
+                                        <div className="flex">
+                                            <p className="font-medium">Puffs:</p>
+                                            <p className="ml-2">
+                                                {product.productPuffs.map((pp, index) => (
+                                                    <span key={index}>
+                                                        {index > 0 && ' / '}
+                                                        {pp.puffs.name} {pp.puffDesc}
+                                                    </span>
+                                                ))}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {renderField("E-liquid Content", product.eLiquidContent)}
+                                    {renderField("Battery Capacity", product.batteryCapacity)}
+                                    {renderField("Coil", product.coil)}
+                                    {renderField("Firing Mechanism", product.firingMechanism)}
+                                    {renderField("Type", product.type)}
+                                    {renderField("Resistance", product.resistance)}
+                                    {renderField("Power Range", product.powerRange)}
+                                    {renderField("Charging", product.charging)}
+                                    {product.extra && (
+                                        <div className='flex'>
+                                            <p className="font-medium">Extra Features:</p>
+                                            <div
+                                                className="prose max-w-none ml-2"
+                                                dangerouslySetInnerHTML={{ __html: product.extra }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Flavor Selection for Packs */}

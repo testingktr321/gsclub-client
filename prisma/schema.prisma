@@ -40,12 +40,13 @@ model Address {
 
 model Product {
   // Required fields 
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  currentPrice  Float
-  originalPrice Float
-  brandId       String @db.ObjectId
-  nicotineId    String @db.ObjectId
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  detailDescription String?
+  currentPrice      Float
+  originalPrice     Float
+  brandId           String  @db.ObjectId
+  nicotineId        String  @db.ObjectId
 
   flavorId       String?          @db.ObjectId
   productFlavors ProductFlavors[]
