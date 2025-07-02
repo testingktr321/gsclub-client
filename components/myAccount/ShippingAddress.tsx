@@ -43,11 +43,7 @@ const ShippingAddress: React.FC<ShippingAddressProps> = ({ onSelectCard, ischeck
     formState: { errors },
   } = useForm<FormData>();
 
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
-
-  const fetchAddresses = async () => {
+   const fetchAddresses = async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/address?email=${email}`, {
@@ -70,6 +66,12 @@ const ShippingAddress: React.FC<ShippingAddressProps> = ({ onSelectCard, ischeck
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, [fetchAddresses]);
+
+ 
 
   const handleEdit = (card: Address) => {
     setCurrentCardId(card.id);

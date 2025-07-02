@@ -57,7 +57,7 @@ const Products = () => {
       params.set("page", "1");
       router.replace(`${pathname}?${params.toString()}`);
     }
-  }, [brandId, flavorId, puffsId, nicotineId]); // Only include filter dependencies
+  }, [brandId, flavorId, puffsId, nicotineId, currentPage, pathname, router, searchParams]); // Include all referenced dependencies
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
