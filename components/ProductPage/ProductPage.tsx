@@ -103,7 +103,7 @@ interface SingleProductProps {
 
 const ProductPage = ({ productId }: SingleProductProps) => {
     const { data: product, isLoading, error } = useProduct(productId);
-    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(true);
     const { data: session } = useSession();
     const [showAllReviews, setShowAllReviews] = useState(false);
     const { mutate: deleteReview } = useDeleteReview();
@@ -504,7 +504,7 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                     Product Reviews
                 </h2>
 
-                <div className="mb-8">
+                <div className="mb-6 flex w-full justify-center items-center">
                     <Button onClick={() => setIsOpen(true)} variant="secondary">
                         <Edit className="mr-2" size={16} />
                         Write a Review
