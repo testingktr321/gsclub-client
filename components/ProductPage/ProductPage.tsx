@@ -1,18 +1,28 @@
 "use client";
-import Image from 'next/image';
-import React from 'react';
-import { Button } from '../ui/button';
+import Image from "next/image";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { format } from "date-fns";
 // import { FaChevronDown } from 'react-icons/fa';
 // import { useSession } from 'next-auth/react';
 // import useCart from '@/hooks/useCart';
-import { Product } from '@/types/product';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import RelatedPRoduct from './RelatedPRoduct';
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import RelatedPRoduct from "./RelatedPRoduct";
+import { useProduct } from "./useProduct";
+import Loading from "./loading";
+import Faq from "./Faq";
+import { useDeleteReview } from "./useReview";
+import { Edit, X } from "lucide-react";
+import StarRating from "../ui/StarRating";
+import ReviewForm from "./ReviewForm";
+import { useSession } from "next-auth/react";
+import Modal from "../ui/modal";
+
 // import { toast } from 'react-hot-toast';
 
 interface SingleProductProps {
-    product: Product | null;
+    productId: string;
 }
 
 // const CustomDropdown = ({
@@ -69,8 +79,8 @@ interface SingleProductProps {
 //                             <button
 //                                 key={option.id}
 //                                 type="button"
-//                                 className={`w-full text-left px-4 py-2 
-//                                     ${selectedValue === option.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'} 
+//                                 className={`w-full text-left px-4 py-2
+//                                     ${selectedValue === option.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}
 //                                     ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
 //                                 onClick={(e) => {
 //                                     e.stopPropagation();
@@ -91,7 +101,14 @@ interface SingleProductProps {
 //     );
 // };
 
-const ProductPage = ({ product }: SingleProductProps) => {
+const ProductPage = ({ productId }: SingleProductProps) => {
+    const { data: product, isLoading, error } = useProduct(productId);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+    const { data: session } = useSession();
+    const [showAllReviews, setShowAllReviews] = useState(false);
+    const { mutate: deleteReview } = useDeleteReview();
+    const [isOpen, setIsOpen] = useState(false);
+
     // const { data: session } = useSession();
     // const email = session?.user.email || "";
     // const cart = useCart();
@@ -101,7 +118,25 @@ const ProductPage = ({ product }: SingleProductProps) => {
     // const [selectedFlavors, setSelectedFlavors] = useState<{ [key: number]: string }>({});
     // const [availableFlavors, setAvailableFlavors] = useState<{ id: string, name: string }[]>([]);
 
-    const hasMultipleFlavors = product?.productFlavors && product.productFlavors.length > 0;
+    // Loading state
+    if (isLoading) {
+        return <Loading />;
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-red-500 bg-red-100 p-4 rounded-md">
+                    <p className="font-semibold">Error loading product</p>
+                    <p className="text-sm mt-1">{error.message}</p>
+                </div>
+            </div>
+        );
+    }
+
+    const hasMultipleFlavors =
+        product?.productFlavors && product.productFlavors.length > 0;
     const hasSingleFlavor = product?.flavorId && !hasMultipleFlavors;
 
     // useEffect(() => {
@@ -231,11 +266,13 @@ const ProductPage = ({ product }: SingleProductProps) => {
     // };
 
     if (!product) {
-        return <div className="flex justify-center items-center min-h-screen">
-            <div className="text-red-500 bg-red-100 p-4 rounded-md">
-                <p className="font-semibold">Product not found</p>
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-red-500 bg-red-100 p-4 rounded-md">
+                    <p className="font-semibold">Product not found</p>
+                </div>
             </div>
-        </div>;
+        );
     }
 
     const renderField = (label: string, value: string | null | undefined) => {
@@ -249,7 +286,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
     };
 
     return (
-        <main className='bg-white min-h-screen'>
+        <main className="bg-white min-h-screen">
             <section className="w-11/12 mx-auto py-7 flex flex-col lg:flex-row gap-3 md:gap-10 xl:gap-20 font-unbounded text-black">
                 {/* Product Images */}
                 <div className="w-full lg:w-[35%] ">
@@ -290,48 +327,86 @@ const ProductPage = ({ product }: SingleProductProps) => {
                             )}
                             {product.packCount > 1 && (
                                 <span>
-                                    (each pack ${(product.currentPrice / product.packCount).toFixed(2)})
+                                    (each pack $
+                                    {(product.currentPrice / product.packCount).toFixed(2)})
                                 </span>
                             )}
                         </div>
 
+                        {product.detailDescription && (
+                            <>
+                                <div className="flex flex-col gap-3">
+                                    <p className="font-bold text-xl text-[#0C0B0B]">
+                                        Description:
+                                    </p>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: product.detailDescription,
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        )}
+
                         {/* Product Specifications */}
                         <div className="space-y-3">
-                            <h2 className="font-bold text-xl text-[#0C0B0B]">Device Details:</h2>
-                            <div className="space-y-1.5">
-                                {product.Nicotine && renderField("Nicotine Strength", product.Nicotine.name)}
-                                {product.productPuffs && product.productPuffs.length > 0 && (
-                                    <div className="flex">
-                                        <p className="font-medium">Puffs:</p>
-                                        <p className="ml-2">
-                                            {product.productPuffs.map((pp, index) => (
-                                                <span key={index}>
-                                                    {index > 0 && ' / '}
-                                                    {pp.puffs.name} {pp.puffDesc}
-                                                </span>
-                                            ))}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {renderField("E-liquid Content", product.eLiquidContent)}
-                                {renderField("Battery Capacity", product.batteryCapacity)}
-                                {renderField("Coil", product.coil)}
-                                {renderField("Firing Mechanism", product.firingMechanism)}
-                                {renderField("Type", product.type)}
-                                {renderField("Resistance", product.resistance)}
-                                {renderField("Power Range", product.powerRange)}
-                                {renderField("Charging", product.charging)}
-                                {product.extra && (
-                                    <div className='flex'>
-                                        <p className="font-medium">Extra Features:</p>
-                                        <div
-                                            className="prose max-w-none ml-2"
-                                            dangerouslySetInnerHTML={{ __html: product.extra }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
+                            <button
+                                className="flex items-center gap-2 font-bold text-xl text-[#0C0B0B]"
+                                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+                            >
+                                Device Details
+                                <svg
+                                    className={`w-5 h-5 transition-transform ${isDetailsOpen ? "rotate-180" : ""
+                                        }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </button>
+                            {isDetailsOpen && (
+                                <div className="space-y-1.5">
+                                    {product.Nicotine &&
+                                        renderField("Nicotine Strength", product.Nicotine.name)}
+                                    {product.productPuffs && product.productPuffs.length > 0 && (
+                                        <div className="flex">
+                                            <p className="font-medium">Puffs:</p>
+                                            <p className="ml-2">
+                                                {product.productPuffs.map((pp, index) => (
+                                                    <span key={index}>
+                                                        {index > 0 && " / "}
+                                                        {pp.puffs.name} {pp.puffDesc}
+                                                    </span>
+                                                ))}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {renderField("E-liquid Content", product.eLiquidContent)}
+                                    {renderField("Battery Capacity", product.batteryCapacity)}
+                                    {renderField("Coil", product.coil)}
+                                    {renderField("Firing Mechanism", product.firingMechanism)}
+                                    {renderField("Type", product.type)}
+                                    {renderField("Resistance", product.resistance)}
+                                    {renderField("Power Range", product.powerRange)}
+                                    {renderField("Charging", product.charging)}
+                                    {product.extra && (
+                                        <div className="flex">
+                                            <p className="font-medium">Extra Features:</p>
+                                            <div
+                                                className="prose max-w-none ml-2"
+                                                dangerouslySetInnerHTML={{ __html: product.extra }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Flavor Selection for Packs */}
@@ -402,9 +477,7 @@ const ProductPage = ({ product }: SingleProductProps) => {
                                             variant="primary"
                                             className="px-8 w-full leading-4 whitespace-nowrap"
                                         >
-                                            <Link href={product?.redirectLink || ""}>
-                                                Shop Now
-                                            </Link>
+                                            <Link href={product?.redirectLink || ""}>Shop Now</Link>
                                         </Button>
                                     )}
                                 </>
@@ -423,29 +496,123 @@ const ProductPage = ({ product }: SingleProductProps) => {
                 </div>
             </section>
 
-            <section className=''>
-                {product.flavorId ? (
-                    <RelatedPRoduct brandId={product.brandId} flavorId={product.flavorId} productId={product.id}/>
+            {/*------------------- Review section --------------------- */}
 
+            <section className="w-11/12 mx-auto mt-10 font-unbounded">
+                <div className="bg-black h-[2.5px] mb-7 md:mb-10 rounded-full"></div>
+                <h2 className="text-center text-xl md:text-2xl font-semibold mb-7 md:mb-10">
+                    Product Reviews
+                </h2>
+
+                <div className="mb-6 flex w-full justify-center items-center">
+                    <Button onClick={() => setIsOpen(true)} variant="secondary">
+                        <Edit className="mr-2" size={16} />
+                        Write a Review
+                    </Button>
+                </div>
+
+                <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
+                    <div className="p-4">
+                        <ReviewForm
+                            productId={productId}
+                            onSuccess={() => setIsOpen(false)}
+                        />
+                    </div>
+                </Modal>
+
+                <div className="space-y-6">
+                    {product?.Review.length > 0 ? (
+                        <>
+                            {(showAllReviews
+                                ? product.Review
+                                : product.Review.slice(0, 3)
+                            ).map((review) => (
+                                <div key={review.id} className="border-b pb-4">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-semibold">{review.userName}</h3>
+                                            <div className="flex items-center gap-2 my-1">
+                                                <StarRating
+                                                    rating={review.rating}
+                                                    setRating={() => { }}
+                                                    readOnly
+                                                />
+                                                <span className="text-sm text-gray-500">
+                                                    {format(new Date(review.createdAt), "MMMM d, yyyy")}
+                                                </span>
+                                            </div>
+                                            <h4 className="font-medium mt-1">{review.title}</h4>
+                                            <p className="text-gray-700 mt-1">{review.comment}</p>
+                                        </div>
+
+                                        {session?.user?.email === review.userEmail && (
+                                            <button
+                                                onClick={() =>
+                                                    deleteReview({
+                                                        reviewId: review.id,
+                                                        userEmail: review.userEmail,
+                                                        productId: product.id,
+                                                    })
+                                                }
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                <X size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+
+                            {product.Review.length > 3 && !showAllReviews && (
+                                <div className="text-center mt-4">
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => setShowAllReviews(true)}
+                                    >
+                                        See All Reviews ({product.Review.length})
+                                    </Button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="text-center py-8">
+                            <p className="text-gray-500">
+                                No reviews yet. Be the first to review!
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </section>
+            <section className="">
+                {product.flavorId ? (
+                    <RelatedPRoduct
+                        brandId={product.brandId}
+                        flavorId={product.flavorId}
+                        productId={product.id}
+                    />
                 ) : (
-                    <RelatedPRoduct brandId={product.brandId} productId={product.id}/>
+                    <RelatedPRoduct brandId={product.brandId} productId={product.id} />
                 )}
             </section>
 
-            <section className='w-full -mt-7 md:-mt-10'>
+            <section className="-mt-4 mb-28">
+                <Faq />
+            </section>
+
+            <section className="w-full -mt-7 md:-mt-10">
                 <Image
                     src="/images/rp_banner.png"
                     width={1000}
                     height={1000}
-                    alt='banner'
-                    className='w-full h-auto object-cover md:block hidden'
+                    alt="banner"
+                    className="w-full h-auto object-cover md:block hidden"
                 />
                 <Image
                     src="/images/rp_banner2.png"
                     width={1000}
                     height={1000}
-                    alt='banner'
-                    className='w-full h-auto object-cover md:hidden block'
+                    alt="banner"
+                    className="w-full h-auto object-cover md:hidden block"
                 />
             </section>
         </main>

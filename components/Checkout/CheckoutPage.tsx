@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useCart from "@/hooks/useCart";
 import { useSession } from "next-auth/react";
@@ -152,15 +152,7 @@ const CheckoutPage = () => {
     return baseName;
   };
 
-  // Configure NMI when script is loaded
-  useEffect(() => {
-    if (scriptLoaded && temp2 && window.CollectJS) {
-      configureCollectJS();
-    }
-  }, [scriptLoaded, temp2]);
-
-  // Function to configure CollectJS
-  const configureCollectJS = () => {
+    const configureCollectJS = useCallback(() => {
     window.CollectJS.configure({
       paymentSelector: "#payButton",
       variant: "inline",
@@ -198,7 +190,17 @@ const CheckoutPage = () => {
         handlePaymentComplete(response.token);
       }
     });
-  };
+  },[]);
+
+  // Configure NMI when script is loaded
+  useEffect(() => {
+    if (scriptLoaded && temp2 && window.CollectJS) {
+      configureCollectJS();
+    }
+  }, [scriptLoaded,configureCollectJS, temp2]);
+
+  // Function to configure CollectJS
+
 
   const [formData, setFormData] = useState<FormData | null>(null);
   const {

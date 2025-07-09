@@ -12,7 +12,7 @@ const Footer = () => {
     ];
 
     return (
-        <section className="bg-black text-white py-5  font-unbounded">
+        <section className="bg-black text-white py-5 -mb-10  font-unbounded">
             <div className="flex flex-row items-center justify-between gap-6 w-11/12 mx-auto">
                 <div>
                     <Link href={"/"}>
