@@ -20,6 +20,8 @@ Bol bum kay nara ho
 baba ek shara ho
 
 Bol Bum
+
+Hare ram
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
