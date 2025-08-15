@@ -191,40 +191,52 @@ const Navbar = () => {
                                 ref={hamburgerButtonRef}
                                 onClick={() => setshow(!show)}
                                 className="relative w-10 z-30"
+                                role="button"
+                                aria-label="Toggle navigation menu"
+                                aria-expanded={show}
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setshow(!show);
+                                    }
+                                }}
                             >
                                 <Image
                                     src={show ? "/images/hamburger2.png" : "/images/hamburger.png"}
-                                    alt="hamburger"
+                                    alt={show ? "Close menu" : "Open menu"}
                                     width={21}
                                     height={21}
                                     className={`z-30 ${show ? "rotate-90 w-[18px]" : "rotate-0 w-5"} transition-all duration-300 ease-linear cursor-pointer`}
                                 />
                             </div>
-                            <div
+                            <nav
                                 ref={hamburgerMenuRef}
                                 className={`absolute -top-2.5 -left-3.5 border border-white shadow-2xl bg-gradient-to-r from-[#3E2FE1] to-[#8C14AC] z-10 rounded-b-xl rounded-tr-xl ${show ? "w-[230px] h-[430px]" : "w-0 h-0"
                                     } transition-all duration-300 ease-linear overflow-hidden`}
+                                aria-hidden={!show}
                             >
                                 <ul className="text-white text-[1.1rem] py-16 px-3 space-y-4 flex flex-col">
                                     {navItems.map(({ title, href }) => (
-                                        <Link
-                                            key={title}
-                                            href={href}
-                                            onClick={() => setshow(!show)}
-                                            className="px-4 cursor-pointer"
-                                        >
-                                            {title}
-                                        </Link>
+                                        <li key={title}>
+                                            <Link
+                                                href={href}
+                                                onClick={() => setshow(!show)}
+                                                className="px-4 cursor-pointer block hover:text-gray-200 focus:text-gray-200 focus:outline-none focus:underline"
+                                            >
+                                                {title}
+                                            </Link>
+                                        </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </nav>
 
                             {/* Search Bar with Dropdown */}
                             <div className="relative text-black search-container flex gap-2 items-center" onClick={handleSearchContainerClick}>
                                 {/* Search input remains the same */}
                                 <motion.input
                                     type="text"
-                                    placeholder="search..."
+                                    placeholder="Search products..."
                                     value={searchQuery}
                                     ref={searchInputRef}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -243,10 +255,11 @@ const Navbar = () => {
                                         width: isSearchFocused ? "10rem" : "10rem",
                                         transition: { duration: 0.3, ease: "easeInOut" }
                                     }}
+                                    aria-label="Search products"
                                 />
                                 <motion.input
                                     type="text"
-                                    placeholder="search..."
+                                    placeholder="Search products..."
                                     value={searchQuery}
                                     ref={searchInputRef}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -261,6 +274,7 @@ const Navbar = () => {
                                         width: isSearchFocused ? "10rem" : "2rem",
                                         transition: { duration: 0.3, ease: "easeInOut" }
                                     }}
+                                    aria-label="Search products"
                                 />
 
                                 {/* Search icon with click handler */}
@@ -269,6 +283,16 @@ const Navbar = () => {
                                     onClick={() => {
                                         setIsSearchFocused(true);
                                         searchInputRef.current?.focus();
+                                    }}
+                                    role="button"
+                                    aria-label="Focus search input"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setIsSearchFocused(true);
+                                            searchInputRef.current?.focus();
+                                        }
                                     }}
                                 >
                                     <CiSearch size={20} />
@@ -286,12 +310,13 @@ const Navbar = () => {
                                             <Link
                                                 href="/"
                                                 onClick={(e) => e.stopPropagation()}
+                                                aria-label="Go to GetSmoke homepage"
                                             >
                                                 <Image
                                                     src={"/images/logo.png"}
                                                     width={150}
                                                     height={150}
-                                                    alt='getsmoke_logo'
+                                                    alt='GetSmoke logo - Go to homepage'
                                                 />
                                             </Link>
                                         </motion.div>
@@ -300,7 +325,11 @@ const Navbar = () => {
 
                                 {/* Search Results Dropdown */}
                                 {showResults && (
-                                    <div className="absolute z-50 top-full -left-10 lg:left-0 w-[92vw] lg:w-[60vw] xl:w-[40vw] mt-2 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-y-auto">
+                                    <div
+                                        className="absolute z-50 top-full -left-10 lg:left-0 w-[92vw] lg:w-[60vw] xl:w-[40vw] mt-2 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-y-auto"
+                                        role="listbox"
+                                        aria-label="Search results"
+                                    >
                                         {isLoading ? (
                                             <div className="flex justify-center items-center p-4">
                                                 <div className="w-5 h-5 border-t-2 border-b-2 border-[#8C14AC] rounded-full animate-spin"></div>
@@ -313,12 +342,21 @@ const Navbar = () => {
                                                         key={product.id}
                                                         className="p-2 hover:bg-gray-100 cursor-pointer flex items-center border-b border-gray-200"
                                                         onMouseDown={() => handleProductClick(product.id)}
+                                                        role="option"
+                                                        tabIndex={0}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                                e.preventDefault();
+                                                                handleProductClick(product.id);
+                                                            }
+                                                        }}
+                                                        aria-label={`${product.name} - $${product.currentPrice.toFixed(2)}`}
                                                     >
                                                         <div className="w-12 h-12 relative mr-3 flex-shrink-0">
                                                             {product.images && product.images.length > 0 ? (
                                                                 <Image
                                                                     src={product.images[0].url}
-                                                                    alt={product.name}
+                                                                    alt={`${product.name} product image`}
                                                                     fill
                                                                     sizes="48px"
                                                                     className="object-cover rounded-md"
@@ -345,26 +383,41 @@ const Navbar = () => {
 
                         </div>
                         <div className="md:mr-28">
-                            <Link href={"/"}>
-                                <Image src={"/images/logo.png"} width={180} height={180} alt='getsmoke_logo' className='hidden md:block' />
+                            <Link href={"/"} aria-label="Go to GetSmoke homepage">
+                                <Image
+                                    src={"/images/logo.png"}
+                                    width={180}
+                                    height={180}
+                                    alt='GetSmoke logo - Go to homepage'
+                                    className='hidden md:block'
+                                />
                             </Link>
                         </div>
                         <div className="flex gap-3 md:gap-5">
                             <div>
-                                <Link href={"/my-account"}>
-                                    <Image src={"/images/user.png"} width={25} height={25} alt='getsmoke_logo' className="cursor-pointer" />
+                                <Link href={"/my-account"} aria-label="Go to my account">
+                                    <Image
+                                        src={"/images/user.png"}
+                                        width={25}
+                                        height={25}
+                                        alt='User account icon'
+                                        className="cursor-pointer"
+                                    />
                                 </Link>
                             </div>
                             <div className="relative">
-                                <Link href="/cart">
+                                <Link href="/cart" aria-label={`Shopping cart${items.length > 0 ? ` (${items.length} items)` : ''}`}>
                                     <Image
                                         src="/images/cart.png"
                                         width={25}
                                         height={25}
-                                        alt="cart"
+                                        alt="Shopping cart icon"
                                     />
                                     {items.length > 0 && (
-                                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                                        <span
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full"
+                                            aria-label={`${items.length} items in cart`}
+                                        >
                                             {items.length}
                                         </span>
                                     )}

@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.itip.com
+
+# Sitemaps
+Sitemap: https://www.itip.com/sitemap.xml
