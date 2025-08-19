@@ -1,10 +1,12 @@
-import CommingSoon from '@/components/CommingSoon/CommingSoon'
-import React from 'react'
+import AdultPage from "@/components/adult-goods/AdultPage";
+import React from "react";
 
 const page = () => {
-    return (
-        <CommingSoon />
-    )
-}
+  return (
+    <div>
+      <AdultPage />
+    </div>
+  );
+};
 
-export default page
+export default page;

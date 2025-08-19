@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, ProductType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -20,6 +20,7 @@ export async function GET(req: Request) {
     const flavorId = searchParams.get("flavorId");
     const puffsId = searchParams.get("puffsId");
     const nicotineId = searchParams.get("nicotineId");
+    const productType = searchParams.get("productType");
     const search = searchParams.get("search");
     const archived = searchParams.has("archived")
       ? searchParams.get("archived") === "true"
@@ -43,6 +44,23 @@ export async function GET(req: Request) {
     // Add relational filters
     if (brandId) filter.brandId = brandId;
     if (nicotineId) filter.nicotineId = nicotineId;
+
+    // Add product type filter with null handling
+    if (productType) {
+      // Validate that the productType is a valid enum value
+      if (Object.values(ProductType).includes(productType as ProductType)) {
+        filter.productType = productType as ProductType;
+      } else {
+        return NextResponse.json(
+          {
+            error: `Invalid product type. Valid types are: ${Object.values(
+              ProductType
+            ).join(", ")}`,
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // Add puffs filter through ProductPuffs relation
     if (puffsId) {
