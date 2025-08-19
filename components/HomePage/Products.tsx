@@ -147,7 +147,7 @@ const Products = ({ productType }: ProductsProps) => {
       className="bg-white text-black font-unbounded w-11/12 mx-auto pb-16"
     >
       {products.length === 0 && !isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4 text-center">
           <ShoppingBag className="h-12 w-12 text-gray-400" />
           <h3 className="text-lg font-medium text-gray-900">
             {brandId || flavorId || puffsId || nicotineId
