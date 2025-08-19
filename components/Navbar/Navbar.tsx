@@ -190,7 +190,7 @@ const Navbar = () => {
                             <div
                                 ref={hamburgerButtonRef}
                                 onClick={() => setshow(!show)}
-                                className="relative w-10 z-30"
+                                className="relative w-10 z-[60]"
                                 role="button"
                                 aria-label="Toggle navigation menu"
                                 aria-expanded={show}
@@ -207,12 +207,12 @@ const Navbar = () => {
                                     alt={show ? "Close menu" : "Open menu"}
                                     width={21}
                                     height={21}
-                                    className={`z-30 ${show ? "rotate-90 w-[18px]" : "rotate-0 w-5"} transition-all duration-300 ease-linear cursor-pointer`}
+                                    className={`${show ? "rotate-90 w-[18px]" : "rotate-0 w-5"} transition-all duration-300 ease-linear cursor-pointer`}
                                 />
                             </div>
                             <nav
                                 ref={hamburgerMenuRef}
-                                className={`absolute -top-2.5 -left-3.5 border border-white shadow-2xl bg-gradient-to-r from-[#3E2FE1] to-[#8C14AC] z-10 rounded-b-xl rounded-tr-xl ${show ? "w-[230px] h-[430px]" : "w-0 h-0"
+                                className={`absolute -top-2.5 -left-3.5 border border-white shadow-2xl bg-gradient-to-r from-[#3E2FE1] to-[#8C14AC] z-50 rounded-b-xl rounded-tr-xl ${show ? "w-[230px] h-[430px]" : "w-0 h-0"
                                     } transition-all duration-300 ease-linear overflow-hidden`}
                                 aria-hidden={!show}
                             >
@@ -279,7 +279,7 @@ const Navbar = () => {
 
                                 {/* Search icon with click handler */}
                                 <div
-                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                                    className="absolute left-2 top-1/2 transform -translate-y-1/2 cursor-pointer z-10"
                                     onClick={() => {
                                         setIsSearchFocused(true);
                                         searchInputRef.current?.focus();
