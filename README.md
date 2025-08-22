@@ -26,6 +26,8 @@ Bol Bum
 Hare ram
 
 Hare Krishna
+
+Hare Ram
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
