@@ -38,6 +38,14 @@ model Address {
   zipCode       String
 }
 
+enum ProductType {
+  VAPES
+  HOOKAH
+  SUPPLEMENTS
+  ADULT_GOODS
+  ACCESSORIES
+}
+
 model Product {
   // Required fields 
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -62,6 +70,9 @@ model Product {
   powerRange      String?
   charging        String?
   extra           String?
+
+  // Product Category
+  productType ProductType @default(VAPES)
 
   // Relations
   brand        Brand          @relation(fields: [brandId], references: [id])

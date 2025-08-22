@@ -1,9 +1,9 @@
-import CommingSoon from '@/components/CommingSoon/CommingSoon'
+import VapePage from '@/components/vapes/VapePage'
 import React from 'react'
 
 const page = () => {
     return (
-        <CommingSoon />
+        <VapePage/>
     )
 }
 

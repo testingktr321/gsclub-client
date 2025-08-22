@@ -19,7 +19,11 @@ import {
 } from "@/components/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 
-const Products = () => {
+type ProductsProps = {
+  productType?: string;
+};
+
+const Products = ({ productType }: ProductsProps) => {
   const { brandId, flavorId, puffsId, nicotineId } = useFilter();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -28,7 +32,12 @@ const Products = () => {
   const limit = 24; // Items per page
 
   // Track previous filter values to detect when filters actually change
-  const prevFiltersRef = React.useRef({ brandId, flavorId, puffsId, nicotineId });
+  const prevFiltersRef = React.useRef({
+    brandId,
+    flavorId,
+    puffsId,
+    nicotineId,
+  });
 
   // Ref for scrolling to top of component
   const componentRef = React.useRef<HTMLElement>(null);
@@ -41,6 +50,7 @@ const Products = () => {
     if (flavorId) params.append("flavorId", flavorId);
     if (puffsId) params.append("puffsId", puffsId);
     if (nicotineId) params.append("nicotineId", nicotineId);
+    if (productType) params.append("productType", productType);
     params.append("page", currentPage.toString());
     params.append("limit", limit.toString());
 
@@ -75,7 +85,16 @@ const Products = () => {
 
     // Update the ref with current filter values
     prevFiltersRef.current = currentFilters;
-  }, [brandId, flavorId, puffsId, nicotineId, currentPage, pathname, router, searchParams]);
+  }, [
+    brandId,
+    flavorId,
+    puffsId,
+    nicotineId,
+    currentPage,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
@@ -87,17 +106,25 @@ const Products = () => {
   // Scroll to top when page changes
   React.useEffect(() => {
     if (componentRef.current) {
-      componentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      // Fallback to window scroll if ref is not available
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      componentRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [currentPage]);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && !componentRef.current) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [currentPage]);
 
   if (isLoading && currentPage === 1) {
-    return <div className="w-11/12 mx-auto">
-      <ProductShimmer />;
-    </div>
+    return (
+      <div className="w-11/12 mx-auto">
+        <ProductShimmer />;
+      </div>
+    );
   }
 
   if (error) {
@@ -115,9 +142,12 @@ const Products = () => {
   const totalPages = data?.totalPages || 1;
 
   return (
-    <section ref={componentRef} className="bg-white text-black font-unbounded w-11/12 mx-auto pb-16">
+    <section
+      ref={componentRef}
+      className="bg-white text-black font-unbounded w-11/12 mx-auto pb-16"
+    >
       {products.length === 0 && !isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4 text-center">
           <ShoppingBag className="h-12 w-12 text-gray-400" />
           <h3 className="text-lg font-medium text-gray-900">
             {brandId || flavorId || puffsId || nicotineId
