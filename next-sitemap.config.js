@@ -76,8 +76,8 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      "http://localhost:3000/server-sitemap-products.xml",
-      "http://localhost:3000/server-sitemap-blog.xml",
+      "https://www.itip.com/server-sitemap-products.xml",
+      "https://www.itip.com/server-sitemap-blog.xml",
     ],
   },
 };
