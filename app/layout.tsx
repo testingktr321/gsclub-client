@@ -123,6 +123,20 @@ export default function RootLayout({
           </div>
         </noscript>
         {/* /Yandex.Metrika counter */}
+
+        {/* Alli AI Widget */}
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `
+              /* Alli AI widget for www.itips.co */
+              (function (w,d,s,o,f,js,fjs) {w['AlliJSWidget']=o;w[o] = w[o] || function () { (w[o].q = w[o].q || []).push(arguments) };js = d.createElement(s), fjs = d.getElementsByTagName(s)[0];js.id = o; js.src = f; js.async = 1; fjs.parentNode.insertBefore(js, fjs);}(window, document, 'script', 'alli', 'https://static.alliai.com/widget/v1.js'));
+              alli('init', 'site_oLVbrkWbu5ty2AvF');
+              alli('optimize', 'all');
+            `,
+          }}
+        />
+        {/* End Alli AI Widget */}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased ${unbounded.variable}`}
