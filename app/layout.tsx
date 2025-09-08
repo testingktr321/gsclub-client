@@ -11,7 +11,6 @@ import { Suspense } from "react";
 import AgeVerification from "@/components/AgeVerification/AgeVerification";
 import ScrollToTopButton from "@/components/ScrollToTopButton/ScrollToTopButton";
 import { getSEOData } from "@/lib/seo";
-import Image from "next/image";
 
 const unbounded = Unbounded({
   subsets: ["latin"],
@@ -113,9 +112,7 @@ export default function RootLayout({
         />
         <noscript>
           <div>
-            <Image
-              width={1000}
-              height={1000}
+            <img
               src="https://mc.yandex.ru/watch/102308489"
               style={{ position: 'absolute', left: '-9999px' }}
               alt=""

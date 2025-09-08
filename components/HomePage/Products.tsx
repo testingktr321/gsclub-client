@@ -28,7 +28,7 @@ const Products = ({ productType }: ProductsProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const currentPage = Number(searchParams.get("page")) || 1;
+  const currentPage = Number(searchParams?.get("page") ?? 1);
   const limit = 24; // Items per page
 
   // Track previous filter values to detect when filters actually change
@@ -78,7 +78,8 @@ const Products = ({ productType }: ProductsProps) => {
       prevFilters.nicotineId !== currentFilters.nicotineId;
 
     if (filtersChanged && currentPage !== 1) {
-      const params = new URLSearchParams(searchParams);
+      // Fix: Handle null searchParams
+      const params = new URLSearchParams(searchParams?.toString() || "");
       params.set("page", "1");
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -98,7 +99,8 @@ const Products = ({ productType }: ProductsProps) => {
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
+    // Fix: Handle null searchParams
+    const params = new URLSearchParams(searchParams?.toString() || "");
     params.set("page", newPage.toString());
     router.push(`${pathname}?${params.toString()}`);
   };

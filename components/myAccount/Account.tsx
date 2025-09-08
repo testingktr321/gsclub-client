@@ -35,7 +35,9 @@ const Account: React.FC<AccountProps> = ({ orders }) => {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.replace(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      // Fix: Handle null pathname
+      const callbackUrl = pathname ? encodeURIComponent(pathname) : '';
+      router.replace(`/login?callbackUrl=${callbackUrl}`);
     }
   }, [status, router, pathname]);
 

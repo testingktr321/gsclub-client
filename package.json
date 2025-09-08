@@ -8,7 +8,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "clean-prisma": "rimraf node_modules/.prisma"
+    "clean-prisma": "rimraf node_modules/.prisma",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -30,6 +31,7 @@
     "lucide-react": "^0.485.0",
     "next": "15.2.4",
     "next-auth": "^4.24.11",
+    "next-sitemap": "^4.2.3",
     "nodemailer": "^6.10.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

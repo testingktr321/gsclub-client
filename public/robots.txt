@@ -2,8 +2,25 @@
 User-agent: *
 Allow: /
 
+# *
+User-agent: *
+Disallow: /admin/*
+Disallow: /api/*
+Disallow: /dashboard/*
+Disallow: /_next/*
+Disallow: /my-account/*
+Disallow: /cart/*
+Disallow: /checkout/*
+Disallow: /email-preview/*
+Disallow: /login/*
+Disallow: /signup/*
+Disallow: /reset-password/*
+Disallow: /forgot-password/*
+
 # Host
-Host: https://www.itip.com
+Host: http://localhost:3000/
 
 # Sitemaps
-Sitemap: https://www.itip.com/sitemap.xml
+Sitemap: http://localhost:3000/sitemap.xml
+Sitemap: http://localhost:3000/server-sitemap-products.xml
+Sitemap: http://localhost:3000/server-sitemap-blog.xml
