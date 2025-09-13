@@ -25,89 +25,21 @@ interface SingleProductProps {
     productId: string;
 }
 
-// const CustomDropdown = ({
-//     options,
-//     selectedValue,
-//     onSelect,
-//     disabledOptions = [],
-//     placeholder = "Select an option"
-// }: {
-//     options: { id: string, name: string }[],
-//     selectedValue: string,
-//     onSelect: (value: string) => void,
-//     disabledOptions?: string[],
-//     placeholder?: string
-// }) => {
-//     const [isOpen, setIsOpen] = useState(false);
-//     const dropdownRef = useRef<HTMLDivElement>(null);
-
-//     useEffect(() => {
-//         const handleClickOutside = (event: MouseEvent) => {
-//             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-//                 setIsOpen(false);
-//             }
-//         };
-
-//         document.addEventListener('mousedown', handleClickOutside);
-//         return () => {
-//             document.removeEventListener('mousedown', handleClickOutside);
-//         };
-//     }, []);
-
-//     // Find the currently selected option
-//     const selectedOption = options.find(opt => opt.id === selectedValue);
-
-//     return (
-//         <div className="relative w-full text-sm" ref={dropdownRef}>
-//             <button
-//                 type="button"
-//                 className={`flex items-center justify-between w-full px-4 py-2 border rounded-md ${isOpen ? 'border-blue-500' : 'border-gray-300'}`}
-//                 onClick={() => setIsOpen(!isOpen)}
-//             >
-//                 <span className="truncate">
-//                     {selectedOption?.name || placeholder}
-//                 </span>
-//                 <FaChevronDown className={`ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-//             </button>
-
-//             {isOpen && (
-//                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-//                     {options.map((option) => {
-//                         const isDisabled = disabledOptions.includes(option.id);
-
-//                         return (
-//                             <button
-//                                 key={option.id}
-//                                 type="button"
-//                                 className={`w-full text-left px-4 py-2
-//                                     ${selectedValue === option.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}
-//                                     ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-//                                 onClick={(e) => {
-//                                     e.stopPropagation();
-//                                     if (!isDisabled) {
-//                                         onSelect(option.id);
-//                                         setIsOpen(false);
-//                                     }
-//                                 }}
-//                                 disabled={isDisabled}
-//                             >
-//                                 {option.name}
-//                             </button>
-//                         );
-//                     })}
-//                 </div>
-//             )}
-//         </div>
-//     );
-// };
-
 const ProductPage = ({ productId }: SingleProductProps) => {
     const { data: product, isLoading, error } = useProduct(productId);
-    const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+
+    // Smart default states based on content availability
+    const hasDescription = product?.detailDescription;
+    const [isDescriptionOpen, setIsDescriptionOpen] = useState(true); // Description should always be open by default when it exists
+    const [isDetailsOpen, setIsDetailsOpen] = useState(!hasDescription); // Device details open only when description doesn't exist
+
     const { data: session } = useSession();
     const [showAllReviews, setShowAllReviews] = useState(false);
     const { mutate: deleteReview } = useDeleteReview();
     const [isOpen, setIsOpen] = useState(false);
+
+    // State for ProductContentSection
+    const [isContentSectionExpanded, setIsContentSectionExpanded] = useState(false);
 
     // const { data: session } = useSession();
     // const email = session?.user.email || "";
@@ -138,132 +70,6 @@ const ProductPage = ({ productId }: SingleProductProps) => {
     const hasMultipleFlavors =
         product?.productFlavors && product.productFlavors.length > 0;
     const hasSingleFlavor = product?.flavorId && !hasMultipleFlavors;
-
-    // useEffect(() => {
-    //     if (hasMultipleFlavors) {
-    //         // Get all available flavors from the product
-    //         const flavors = product.productFlavors!.map(pf => ({
-    //             id: pf.flavorId,
-    //             name: pf.flavor.name
-    //         }));
-    //         setAvailableFlavors(flavors);
-
-    //         // Initialize selected flavors only if they haven't been selected yet
-    //         if (flavors.length > 0) {
-    //             setSelectedFlavors(prevSelected => {
-    //                 // Only set default values for uninitialized selections
-    //                 const newSelections = { ...prevSelected };
-    //                 for (let i = 0; i < product.packCount; i++) {
-    //                     if (!newSelections[i]) {
-    //                         newSelections[i] = flavors[0].id;
-    //                     }
-    //                 }
-    //                 return newSelections;
-    //             });
-    //         }
-    //     } else if (hasSingleFlavor) {
-    //         // For single flavor, set it as the only available option
-    //         if (product.flavorId) {
-    //             setAvailableFlavors([{
-    //                 id: product.flavorId,
-    //                 name: product.flavor?.name || "Default Flavor"
-    //             }]);
-
-    //             setSelectedFlavors({ 0: product.flavorId });
-    //         }
-    //     }
-    // }, [product, hasMultipleFlavors, hasSingleFlavor]);
-
-    // const getDisabledFlavors = (currentIndex: number) => {
-
-    //     // Only disable flavors that are already selected in other positions
-    //     // and only if we're enforcing unique flavor selection
-    //     const enforceUniqueFlavors = availableFlavors.length === product?.packCount;
-
-    //     if (enforceUniqueFlavors) {
-    //         return Object.entries(selectedFlavors)
-    //             .filter(([index]) => Number(index) !== currentIndex)
-    //             .map(([, flavorId]) => flavorId);
-    //     }
-
-    //     return [];
-    // };
-
-    // const handleIncrement = () => {
-    //     setQuantity((prev) => prev + 1);
-    // };
-
-    // const handleDecrement = () => {
-    //     if (quantity > 1) {
-    //         setQuantity((prev) => prev - 1);
-    //     }
-    // };
-
-    // const handleFlavorChange = (packIndex: number, flavorId: string) => {
-    //     setSelectedFlavors(prev => ({
-    //         ...prev,
-    //         [packIndex]: flavorId
-    //     }));
-    // };
-
-    // const allFlavorsSelected = () => {
-    //     if (!hasMultipleFlavors) return true;
-    //     for (let i = 0; i < product.packCount; i++) {
-    //         if (!selectedFlavors[i]) return false;
-    //     }
-    //     return true;
-    // };
-
-    // const addToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    //     event.stopPropagation();
-    //     setIsLoading(true);
-
-    //     try {
-    //         if (hasMultipleFlavors && !allFlavorsSelected()) {
-    //             toast.error("Please select all flavors before adding to cart");
-    //             setIsLoading(false);
-    //             return;
-    //         }
-
-    //         if (hasSingleFlavor) {
-    //             // Simple case - single flavor product
-    //             const productData = {
-    //                 id: product!.id,
-    //                 quantity: quantity,
-    //             };
-    //             await cart.addItem(email, productData);
-    //         } else if (hasMultipleFlavors) {
-    //             // Pack of products - collect all items first
-    //             const itemsToAdd = [];
-    //             const flavorGroups: { [key: string]: number } = {};
-
-    //             // Count how many of each flavor was selected
-    //             for (let i = 0; i < product.packCount; i++) {
-    //                 const flavorId = selectedFlavors[i];
-    //                 if (flavorId) {
-    //                     flavorGroups[flavorId] = (flavorGroups[flavorId] || 0) + 1;
-    //                 }
-    //             }
-
-    //             // Create array of items to add in batch
-    //             for (const [flavorId, count] of Object.entries(flavorGroups)) {
-    //                 itemsToAdd.push({
-    //                     id: product!.id,
-    //                     quantity: count * quantity, // Multiply by the quantity of packs
-    //                     attributeId: flavorId // Using attributeId to distinguish flavors
-    //                 });
-    //             }
-
-    //             // Add all items at once
-    //             await cart.addItems(email, itemsToAdd);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error adding to cart:", error);
-    //         toast.error("Failed to add items to cart");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
     if (!product) {
         return (
@@ -333,20 +139,38 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                             )}
                         </div>
 
+                        {/* Product Description */}
                         {product.detailDescription && (
-                            <>
-                                <div className="flex flex-col gap-3">
-                                    <p className="font-bold text-xl text-[#0C0B0B]">
-                                        Description:
-                                    </p>
+                            <div className="space-y-3">
+                                <button
+                                    className="flex items-center gap-2 font-bold text-xl text-[#0C0B0B]"
+                                    onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
+                                >
+                                    Description
+                                    <svg
+                                        className={`w-5 h-5 transition-transform ${isDescriptionOpen ? "rotate-180" : ""
+                                            }`}
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 9l-7 7-7-7"
+                                        />
+                                    </svg>
+                                </button>
+                                {isDescriptionOpen && (
                                     <div
                                         className="prose max-w-none"
                                         dangerouslySetInnerHTML={{
                                             __html: product.detailDescription,
                                         }}
                                     />
-                                </div>
-                            </>
+                                )}
+                            </div>
                         )}
 
                         {/* Product Specifications */}
@@ -409,32 +233,6 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                             )}
                         </div>
 
-                        {/* Flavor Selection for Packs */}
-                        {/* {hasMultipleFlavors && availableFlavors.length > 0 && (
-                            <div className="mt-4 p-4 border border-gray-200 rounded-lg">
-                                <h3 className="font-semibold mb-4">Pack of {product.packCount} - Select Flavors</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {Array.from({ length: product.packCount }).map((_, index) => (
-                                        <div key={index} className="flex flex-col gap-1">
-                                            <span className="font-medium text-sm">Flavor {index + 1}:</span>
-                                            <CustomDropdown
-                                                options={availableFlavors}
-                                                selectedValue={selectedFlavors[index] || ""}
-                                                onSelect={(value) => handleFlavorChange(index, value)}
-                                                disabledOptions={getDisabledFlavors(index)}
-                                                placeholder="Select flavor"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                                {!allFlavorsSelected() && (
-                                    <p className="text-sm text-red-500 mt-2">
-                                        Please select all {product.packCount} flavors before adding to cart
-                                    </p>
-                                )}
-                            </div>
-                        )} */}
-
                         {/* Stock Action Section */}
                         <div className="mt-8 flex flex-col lg:flex-row w-full items-center gap-4">
                             {product.isArchived ? (
@@ -443,34 +241,6 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                                 </div>
                             ) : (
                                 <>
-                                    {/* Quantity Selector - Only show for single flavor products */}
-                                    {/* {!hasMultipleFlavors && (
-                                        <div className="border border-slate-300 px-4 py-2 rounded-full flex items-center justify-between gap-6 w-full lg:w-fit">
-                                            <span className="cursor-pointer" onClick={handleDecrement}>
-                                                <FaMinus />
-                                            </span>
-                                            {quantity}
-                                            <span className="cursor-pointer" onClick={handleIncrement}>
-                                                <FaPlus />
-                                            </span>
-                                        </div>
-                                    )} */}
-
-                                    {/* Add to Cart Button */}
-                                    {/* <Button
-                                        type="submit"
-                                        variant="primary"
-                                        className="px-8 w-full"
-                                        disabled={isLoading || (hasMultipleFlavors && !allFlavorsSelected())}
-                                        onClick={addToCart}
-                                    >
-                                        {isLoading ? (
-                                            <FaSpinner className="animate-spin mx-auto" />
-                                        ) : (
-                                            `Add to Cart${hasMultipleFlavors ? ` (${product.packCount} items)` : ''}`
-                                        )}
-                                    </Button> */}
-
                                     {product?.redirectLink && (
                                         <Button
                                             type="submit"
@@ -583,6 +353,63 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                     )}
                 </div>
             </section>
+
+            {/*------------------- Product Content Section --------------------- */}
+            {product.ProductContentSection && (
+                <section className="w-11/12 mx-auto mt-10 font-unbounded text-center">
+                    <div className="bg-black h-[2.5px] mb-7 md:mb-10 rounded-full"></div>
+
+                    <div className="space-y-4">
+                        <h2 className="text-xl md:text-2xl font-semibold text-[#0C0B0B]">
+                            {product.ProductContentSection.title}
+                        </h2>
+
+                        <p className="text-gray-700 leading-relaxed">
+                            {product.ProductContentSection.description}
+                        </p>
+
+                        {product.ProductContentSection.detailDescription && (
+                            <div className="bg-gray-100 rounded-lg p-4 space-y-4">
+                                {isContentSectionExpanded && (
+                                    <div
+                                        className="prose max-w-none text-gray-700 text-center"
+                                        dangerouslySetInnerHTML={{
+                                            __html: product.ProductContentSection.detailDescription,
+                                        }}
+                                    />
+                                )}
+
+                                <div className="flex justify-center">
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() =>
+                                            setIsContentSectionExpanded(!isContentSectionExpanded)
+                                        }
+                                        className="flex items-center gap-2"
+                                    >
+                                        {isContentSectionExpanded ? "Read Less" : "Read More"}
+                                        <svg
+                                            className={`w-4 h-4 transition-transform ${isContentSectionExpanded ? "rotate-180" : ""
+                                                }`}
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M19 9l-7 7-7-7"
+                                            />
+                                        </svg>
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
             <section className="">
                 {product.flavorId ? (
                     <RelatedPRoduct

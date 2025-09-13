@@ -16,54 +16,62 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         // Fetch product data
         const product = await prisma.product.findUnique({
             where: { id: productId },
-            select: { name: true },
+            select: { name: true, },
         });
 
-        // Fetch SEO data from the database for the product page route
-        const seoData = await getSEOData('/product/*');
-
-        if (!seoData) {
+        if (!product) {
             return {
-                title: product?.name || 'Product Not Found',
-                description: 'View our product details.',
+                title: 'Product Not Found',
+                description: 'The requested product could not be found.',
             };
         }
+
+        // Fetch SEO data for the specific product ID
+        const seoData = await getSEOData(`/product/${productId}`);
 
         const metadata: Metadata = {};
 
-        // Construct title: Product Name - SEO Title
-        if (product?.name && seoData.title) {
-            metadata.title = `${product.name} - ${seoData.title}`;
-        } else if (product?.name) {
-            metadata.title = product.name;
-        } else if (seoData.title) {
-            metadata.title = seoData.title;
-        }
+        // If SEO data exists for this specific product, use it exclusively
+        if (seoData) {
+            // Use SEO data only, don't mix with product data
+            if (seoData.title) {
+                metadata.title = seoData.title;
+            }
 
-        // Basic SEO
-        if (seoData.description) metadata.description = seoData.description;
-        if (seoData.keywords?.length > 0) metadata.keywords = seoData.keywords;
+            if (seoData.description) {
+                metadata.description = seoData.description;
+            }
 
-        // OpenGraph
-        const ogTitle = seoData.ogTitle || metadata.title;
-        const ogDescription = seoData.ogDescription || seoData.description;
-        const ogImage = seoData.ogImage;
+            // Keywords
+            if (seoData.keywords && Array.isArray(seoData.keywords) && seoData.keywords.length > 0) {
+                metadata.keywords = seoData.keywords;
+            }
 
-        if (ogTitle || ogDescription || ogImage) {
-            metadata.openGraph = {};
-            if (ogTitle) metadata.openGraph.title = ogTitle;
-            if (ogDescription) metadata.openGraph.description = ogDescription;
-            if (ogImage) metadata.openGraph.images = [ogImage];
-        }
+            // OpenGraph
+            if (seoData.ogTitle || seoData.ogDescription || seoData.ogImage) {
+                metadata.openGraph = {};
+                if (seoData.ogTitle) metadata.openGraph.title = seoData.ogTitle;
+                if (seoData.ogDescription) metadata.openGraph.description = seoData.ogDescription;
+                if (seoData.ogImage) metadata.openGraph.images = [seoData.ogImage];
+            }
 
-        // Twitter
-        if (ogTitle || ogDescription || ogImage) {
-            metadata.twitter = {
-                card: 'summary_large_image',
-            };
-            if (ogTitle) metadata.twitter.title = ogTitle;
-            if (ogDescription) metadata.twitter.description = ogDescription;
-            if (ogImage) metadata.twitter.images = [ogImage];
+            // Twitter
+            if (seoData.ogTitle || seoData.ogDescription || seoData.ogImage) {
+                metadata.twitter = {
+                    card: 'summary_large_image',
+                };
+                if (seoData.ogTitle) metadata.twitter.title = seoData.ogTitle;
+                if (seoData.ogDescription) metadata.twitter.description = seoData.ogDescription;
+                if (seoData.ogImage) metadata.twitter.images = [seoData.ogImage];
+            }
+        } else {
+            // No SEO data exists, fallback to product data
+            if (product.name) {
+                metadata.title = product.name;
+            }
+
+            // No description fallback since product doesn't have description field
+            metadata.description = 'View product details.';
         }
 
         return metadata;
@@ -80,7 +88,6 @@ const page = async ({ params }: Props) => {
     const { productId } = await params;
 
     return <ProductPage productId={productId} />;
-
 };
 
 export default page;

@@ -14,7 +14,7 @@ const Blog = ({ articles }: BlogProps) => {
       {/* All Blogs */}
       <div className='font-plusSans gap-6 grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1'>
         {articles.map((article, i) => (
-          <Link href={`/blog/${article.id}`} key={i}>
+          <Link href={`/blog/${article.slug}`} key={i}>
             <Image
               src={article.images[0]?.url}
               alt={article.title}
