@@ -1,7 +1,8 @@
-import React from 'react';
+"use client"
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { IoIosArrowBack } from 'react-icons/io';
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { format } from 'date-fns';
 import { Article } from '@/types/article';
 
@@ -10,6 +11,7 @@ interface BlogDetailsProps {
 }
 
 const BlogDetails = ({ article }: BlogDetailsProps) => {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const formattedDate = format(new Date(article.createdAt), 'dd/MM/yyyy');
 
   // Dynamic styles for the blog content
@@ -24,6 +26,13 @@ const BlogDetails = ({ article }: BlogDetailsProps) => {
     [&_strong]:font-bold
     [&_a]:text-blue-600 [&_a]:underline [&_a]:hover:text-blue-800
   `;
+
+  // Sort FAQ items by order
+  const sortedFaqs = article.faq ? [...article.faq].sort((a, b) => a.order - b.order) : [];
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  };
 
   return (
     <main className="w-11/12 mx-auto pt-6 pb-14 font-unbounded text-black">
@@ -63,6 +72,40 @@ const BlogDetails = ({ article }: BlogDetailsProps) => {
           className={contentStyles}
         />
       </article>
+
+      {/* FAQ Section */}
+      {sortedFaqs.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {sortedFaqs.map((faq, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg">
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className="w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <h3 className="text-lg font-semibold text-gray-900 pr-4">
+                    {faq.question}
+                  </h3>
+                  {openFaqIndex === index ? (
+                    <IoIosArrowUp className="text-gray-600 flex-shrink-0" size={20} />
+                  ) : (
+                    <IoIosArrowDown className="text-gray-600 flex-shrink-0" size={20} />
+                  )}
+                </button>
+                {openFaqIndex === index && (
+                  <div className="px-4 pb-4 border-t border-gray-100">
+                    <div
+                      dangerouslySetInnerHTML={{ __html: faq.answer }}
+                      className={`text-gray-700 pt-3 ${contentStyles}`}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 };

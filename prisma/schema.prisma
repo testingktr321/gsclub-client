@@ -87,9 +87,10 @@ model Product {
   updatedAt  DateTime @updatedAt
 
   //new feild 
-  redirectLink String?
-  OrderItem    OrderItem[]
-  Review       Review[]
+  redirectLink          String?
+  OrderItem             OrderItem[]
+  Review                Review[]
+  ProductContentSection ProductContentSection?
 }
 
 model ProductFlavors {
@@ -149,6 +150,21 @@ model Flavor {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   ProductFlavors ProductFlavors[]
+}
+
+model ProductContentSection {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  description       String
+  detailDescription String
+
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId])
 }
 
 model Review {
@@ -239,13 +255,21 @@ model Shipment {
 }
 
 model BlogArticle {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String    @unique
   title       String
-  subtitle    String   @default("")
-  description String   @default("")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  subtitle    String    @default("")
+  description String    @default("")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   images      Image[]
+  faq         BlogFaq[]
+}
+
+type BlogFaq {
+  question String
+  answer   String
+  order    Int    @default(0)
 }
 
 model Enquiry {

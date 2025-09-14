@@ -37,6 +37,7 @@ export async function GET(req: NextRequest, { params }: Props) {
             flavor: true,
           },
         },
+        ProductContentSection: true,
       },
     });
 

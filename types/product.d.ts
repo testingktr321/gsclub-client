@@ -45,7 +45,7 @@ interface ProductPuffs {
   puffs: Puffs;
 }
 
-interface ReviewProps{
+interface ReviewProps {
   id: string;
   userEmail: string;
   userName: string;
@@ -66,10 +66,20 @@ export interface ProductFlavors {
   flavor: Flavor; // Include the related flavor
 }
 
+export interface ProductContentSection {
+  id: string;
+  title: string;
+  description: string;
+  detailDescription: string;
+  productId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Product {
   id: string;
   name: string;
-  Review:ReviewProps[]
+  Review: ReviewProps[];
   currentPrice: number;
   originalPrice: number;
   // Optional fields
@@ -104,4 +114,5 @@ export interface Product {
   redirectLink: string | null;
   packCount: number;
   detailDescription: string | null;
+  ProductContentSection?: ProductContentSection | null
 }

@@ -18,9 +18,9 @@ Disallow: /reset-password/*
 Disallow: /forgot-password/*
 
 # Host
-Host: http://localhost:3000/
+Host: https://www.itip.com/
 
 # Sitemaps
-Sitemap: http://localhost:3000/sitemap.xml
-Sitemap: http://localhost:3000/server-sitemap-products.xml
-Sitemap: http://localhost:3000/server-sitemap-blog.xml
+Sitemap: https://www.itip.com/sitemap.xml
+Sitemap: https://www.itip.com/server-sitemap-products.xml
+Sitemap: https://www.itip.com/server-sitemap-blog.xml
