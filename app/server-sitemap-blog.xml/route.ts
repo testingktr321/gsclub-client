@@ -17,7 +17,7 @@ export async function GET() {
       select: {
         id: true,
         title: true,
-        title: slug,
+        slug: true,
         updatedAt: true,
         createdAt: true,
         images: {
