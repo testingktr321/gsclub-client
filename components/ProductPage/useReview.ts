@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 interface CreateReviewParams {
   productId: string;
+  productSlug: string;
   reviewData: {
     userName: string;
     userEmail: string;
@@ -17,6 +18,7 @@ interface DeleteReviewParams {
   reviewId: string;
   userEmail: string;
   productId: string;
+  productSlug: string;
 }
 
 interface DeleteReviewResponse {
@@ -78,7 +80,7 @@ export const useCreateReview = () => {
     mutationFn: createReview,
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["product", variables.productId],
+        queryKey: ["product", variables.productSlug],
       });
       toast.success("Review submitted successfully!");
     },
@@ -95,7 +97,7 @@ export const useDeleteReview = () => {
     mutationFn: deleteReview,
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["product", variables.productId],
+        queryKey: ["product", variables.productSlug],
       });
       toast.success("Review deleted successfully!");
     },

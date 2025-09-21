@@ -78,6 +78,7 @@ export interface ProductContentSection {
 
 export interface Product {
   id: string;
+  slug: string;
   name: string;
   Review: ReviewProps[];
   currentPrice: number;
@@ -114,5 +115,5 @@ export interface Product {
   redirectLink: string | null;
   packCount: number;
   detailDescription: string | null;
-  ProductContentSection?: ProductContentSection | null
+  ProductContentSection?: ProductContentSection | null;
 }

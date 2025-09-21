@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 
 interface ReviewFormProps {
   productId: string;
+  productSlug: string;
   onSuccess?: () => void;
 }
 
@@ -23,7 +24,7 @@ type FormValues = {
   email?: string;
 };
 
-const ReviewForm = ({ productId, onSuccess }: ReviewFormProps) => {
+const ReviewForm = ({ productId, productSlug, onSuccess }: ReviewFormProps) => {
   const { data: session } = useSession();
   const isSignedIn = !!session?.user;
 
@@ -75,6 +76,7 @@ const ReviewForm = ({ productId, onSuccess }: ReviewFormProps) => {
 
     createReview({
       productId,
+      productSlug,
       reviewData
     }, {
       onSuccess: () => {

@@ -48,8 +48,9 @@ enum ProductType {
 
 model Product {
   // Required fields 
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
+  id   String  @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  slug String? @unique
   detailDescription String?
   currentPrice      Float
   originalPrice     Float

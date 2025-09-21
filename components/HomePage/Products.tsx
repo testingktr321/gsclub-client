@@ -169,7 +169,7 @@ const Products = ({ productType }: ProductsProps) => {
               {products.map((product: Product) => (
                 <div
                   onClick={() => {
-                    router.push(`/product/${product.id}`);
+                    router.push(`/product/${product.slug}`);
                   }}
                   key={product.id}
                   className="cursor-pointer"

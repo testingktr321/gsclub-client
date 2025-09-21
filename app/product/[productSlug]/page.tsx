@@ -5,17 +5,17 @@ import type { Metadata } from 'next';
 import { getSEOData } from '@/lib/seo';
 
 type Props = {
-    params: Promise<{ productId: string }>;
+    params: Promise<{ productSlug: string }>;
 };
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { productId } = await params;
+    const { productSlug } = await params;
 
     try {
         // Fetch product data
         const product = await prisma.product.findUnique({
-            where: { id: productId },
+            where: { slug: productSlug },
             select: { name: true, },
         });
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }
 
         // Fetch SEO data for the specific product ID
-        const seoData = await getSEOData(`/product/${productId}`);
+        const seoData = await getSEOData(`/product/${productSlug}`);
 
         const metadata: Metadata = {};
 
@@ -85,9 +85,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const page = async ({ params }: Props) => {
-    const { productId } = await params;
+    const { productSlug } = await params;
 
-    return <ProductPage productId={productId} />;
+    return <ProductPage productSlug={productSlug} />;
 };
 
 export default page;

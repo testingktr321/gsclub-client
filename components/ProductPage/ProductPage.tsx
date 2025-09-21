@@ -22,11 +22,11 @@ import Modal from "../ui/modal";
 // import { toast } from 'react-hot-toast';
 
 interface SingleProductProps {
-    productId: string;
+    productSlug: string;
 }
 
-const ProductPage = ({ productId }: SingleProductProps) => {
-    const { data: product, isLoading, error } = useProduct(productId);
+const ProductPage = ({ productSlug }: SingleProductProps) => {
+    const { data: product, isLoading, error } = useProduct(productSlug);
 
     // Smart default states based on content availability
     const hasDescription = product?.detailDescription;
@@ -284,7 +284,8 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                 <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
                     <div className="p-4">
                         <ReviewForm
-                            productId={productId}
+                            productId={product.id}
+                            productSlug={product.slug}
                             onSuccess={() => setIsOpen(false)}
                         />
                     </div>
@@ -322,6 +323,7 @@ const ProductPage = ({ productId }: SingleProductProps) => {
                                                         reviewId: review.id,
                                                         userEmail: review.userEmail,
                                                         productId: product.id,
+                                                        productSlug: product.slug,
                                                     })
                                                 }
                                                 className="text-red-500 hover:text-red-700"
