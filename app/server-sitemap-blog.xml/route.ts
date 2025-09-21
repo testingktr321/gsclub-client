@@ -17,6 +17,7 @@ export async function GET() {
       select: {
         id: true,
         title: true,
+        title: slug,
         updatedAt: true,
         createdAt: true,
         images: {
@@ -36,7 +37,7 @@ export async function GET() {
 ${articles
   .map((article) => {
     // Use slug if available, otherwise use ID
-    const urlPath = article.id;
+    const urlPath = article.slug;
 
     return `
   <url>

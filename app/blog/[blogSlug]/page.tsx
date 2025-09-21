@@ -1,14 +1,14 @@
 import BlogDetails from '@/components/Blog/BlogDetails';
 import { prisma } from '@/lib/prisma';
+import { getSEOData } from '@/lib/seo';
 import { Article } from '@/types/article';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
-import type { Metadata } from 'next';
-import { getSEOData } from '@/lib/seo';
 
 type Props = {
-    params: Promise<{ blogSlug: string }>;
-};
+    params: Promise<{ blogSlug: string }>
+}
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
