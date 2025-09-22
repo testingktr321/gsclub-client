@@ -37,7 +37,7 @@ ${products
   .map(
     (product) => `
   <url>
-    <loc>https://www.itip.com/product/${product.slug}</loc>
+    <loc>https://www.itips.co/product/${product.slug}</loc>
     <lastmod>${product.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
