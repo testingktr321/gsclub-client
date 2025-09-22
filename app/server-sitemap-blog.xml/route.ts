@@ -41,7 +41,7 @@ ${articles
 
     return `
   <url>
-    <loc>https://www.itip.com/blog/${urlPath}</loc>
+    <loc>https://www.itips.co/blog/${urlPath}</loc>
     <lastmod>${article.updatedAt.toISOString()}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

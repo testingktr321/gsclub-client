@@ -18,9 +18,9 @@ Disallow: /reset-password/*
 Disallow: /forgot-password/*
 
 # Host
-Host: https://www.itip.com/
+Host: https://www.itips.co/
 
 # Sitemaps
-Sitemap: https://www.itip.com/sitemap.xml
-Sitemap: https://www.itip.com/server-sitemap-products.xml
-Sitemap: https://www.itip.com/server-sitemap-blog.xml
+Sitemap: https://www.itips.co/sitemap.xml
+Sitemap: https://www.itips.co/server-sitemap-products.xml
+Sitemap: https://www.itips.co/server-sitemap-blog.xml
