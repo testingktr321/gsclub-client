@@ -202,7 +202,7 @@ const ProductList: React.FC<ProductListProps> = ({
                             <div
                                 key={product.id}
                                 className="flex-shrink-0 w-[160px] md:w-[280px] cursor-pointer"
-                                onClick={() => router.push(`/product/${product.id}`)}
+                                onClick={() => router.push(`/product/${product.slug}`)}
                             >
                                 <div className="border-2 border-gray-200 rounded-3xl md:rounded-4xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
                                     <div className="aspect-square relative bg-gray-100 h-[160px] md:h-[280px]">

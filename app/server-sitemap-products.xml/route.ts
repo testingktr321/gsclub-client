@@ -19,6 +19,7 @@ export async function GET() {
       },
       select: {
         id: true,
+        slug: true,
         name: true,
         updatedAt: true,
         images: {
@@ -36,7 +37,7 @@ ${products
   .map(
     (product) => `
   <url>
-    <loc>https://www.itip.com/product/${product.id}</loc>
+    <loc>https://www.itip.com/product/${product.slug}</loc>
     <lastmod>${product.updatedAt.toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

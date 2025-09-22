@@ -2,18 +2,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/types/product";
 
-const fetchProduct = async (productId: string): Promise<Product> => {
-  const response = await fetch(`/api/products/${productId}`);
+const fetchProduct = async (productSlug: string): Promise<Product> => {
+  const response = await fetch(`/api/products/${productSlug}`);
   if (!response.ok) {
     throw new Error("Failed to fetch product");
   }
   return response.json();
 };
 
-export const useProduct = (productId: string) => {
+export const useProduct = (productSlug: string) => {
   return useQuery<Product>({
-    queryKey: ["product", productId],
-    queryFn: () => fetchProduct(productId),
-    enabled: !!productId,
+    queryKey: ["product", productSlug],
+    queryFn: () => fetchProduct(productSlug),
+    enabled: !!productSlug,
   });
 };

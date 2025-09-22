@@ -3,16 +3,16 @@ import { Product } from "@/types/product";
 import { NextRequest, NextResponse } from "next/server";
 
 type Props = {
-  params: Promise<{ productId: string }>;
+  params: Promise<{ productSlug: string }>;
 };
 
 export async function GET(req: NextRequest, { params }: Props) {
-  const { productId } = await params;
+  const { productSlug } = await params;
 
   try {
     const product = await prisma.product.findUnique({
       where: {
-        id: productId,
+        slug: productSlug,
       },
       include: {
         Review: true,
@@ -44,9 +44,14 @@ export async function GET(req: NextRequest, { params }: Props) {
     if (!product) {
       return new NextResponse(null, { status: 404 });
     }
+    if (!product.slug) {
+      console.error("Product found but slug is null:", product.id);
+      return new NextResponse(null, { status: 500 });
+    }
 
     const transformedProduct: Product = {
       ...product,
+      slug: product.slug,
       packCount: product.packCount ?? 1,
       puffs: product.productPuffs.map((pp) => ({
         ...pp.puffs,
