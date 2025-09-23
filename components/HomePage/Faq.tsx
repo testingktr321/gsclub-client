@@ -45,7 +45,7 @@ const FaqItem = ({ faq }: { faq: { question: string; answer: string }; index: nu
 };
 
 const Faq = () => {
-  const { data: faqPage, isLoading, error, isError } = useFAQBySlug('home-page');
+  const { data: faqPage, isLoading, error, isError } = useFAQBySlug('/');
 
   if (isError) return <div className="text-red-500 text-center py-8">Error: {error?.message || 'Failed to load FAQs'}</div>
 

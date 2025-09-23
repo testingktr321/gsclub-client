@@ -1,6 +1,6 @@
 "use client"
 import { useFAQBySlug } from '@/hooks/useFAQs';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -44,10 +44,28 @@ const FaqItem = ({ faq }: { faq: { question: string; answer: string }; index: nu
     );
 };
 
-const Faq = () => {
-    const { data: faqPage, isLoading, error, isError } = useFAQBySlug('product-detail-page');
+interface FaqProps {
+    slug: string;
+}
 
-    if (isError) return <div className="text-red-500 text-center py-8">Error: {error?.message || 'Failed to load FAQs'}</div>
+const Faq: React.FC<FaqProps> = ({ slug }) => {
+    // 1️⃣ fetch by slug
+    const { data: faqBySlug, isLoading: loadingSlug, isError: errorSlug } = useFAQBySlug(`/product/${slug}`);
+
+    // 2️⃣ if slug failed or empty → fetch fallback
+    const shouldFallback = errorSlug || !faqBySlug?.faqs?.length;
+    const { data: faqFallback, isLoading: loadingFallback } = useFAQBySlug("/product/*");
+
+    // pick final data
+    const faqPage = useMemo(() => {
+        if (faqBySlug?.faqs?.length) return faqBySlug;
+        return faqFallback;
+    }, [faqBySlug, faqFallback]);
+
+    const isLoading = loadingSlug || (shouldFallback && loadingFallback);
+
+    // ❌ no FAQs at all → don’t render
+    if (!isLoading && !faqPage?.faqs?.length) return null;
 
     return (
         <div className="w-11/12 mx-auto font-unbounded">
