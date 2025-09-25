@@ -425,7 +425,7 @@ const ProductPage = ({ productSlug }: SingleProductProps) => {
             </section>
 
             <section className="-mt-4 mb-28">
-                <Faq />
+                <Faq slug={product.slug} />
             </section>
 
             <section className="w-full -mt-7 md:-mt-10">
