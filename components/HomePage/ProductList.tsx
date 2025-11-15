@@ -247,11 +247,11 @@ const ProductList: React.FC<ProductListProps> = ({
                                                 <Button
                                                     type="submit"
                                                     className="leading-4 lg:whitespace-nowrap text-xs md:text-sm px-2 md:px-4 py-1 md:py-2"
-                                                    onClick={(e) => e.stopPropagation()}
+                                                    // onClick={(e) => e.stopPropagation()}
                                                 >
-                                                    <Link href={product?.redirectLink || ""}>
+                                                    {/* <Link href={product?.redirectLink || ""}> */}
                                                         Shop Now
-                                                    </Link>
+                                                    {/* </Link> */}
                                                 </Button>
                                             )}
                                         </div>
