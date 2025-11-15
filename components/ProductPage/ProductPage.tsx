@@ -7,7 +7,7 @@ import { format } from "date-fns";
 // import { useSession } from 'next-auth/react';
 // import useCart from '@/hooks/useCart';
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+// import Link from "next/link";
 import RelatedPRoduct from "./RelatedPRoduct";
 import { useProduct } from "./useProduct";
 import Loading from "./loading";
@@ -235,7 +235,7 @@ const ProductPage = ({ productSlug }: SingleProductProps) => {
 
                         {/* Stock Action Section */}
                         <div className="mt-8 flex flex-col lg:flex-row w-full items-center gap-4">
-                            {product.isArchived ? (
+                            {/* {product.isArchived ? (
                                 <div className="w-full text-center bg-gray-100 border border-gray-300 text-gray-600 py-3 rounded-full font-medium">
                                     Not in Stock
                                 </div>
@@ -251,7 +251,7 @@ const ProductPage = ({ productSlug }: SingleProductProps) => {
                                         </Button>
                                     )}
                                 </>
-                            )}
+                            )} */}
 
                             {/* Return to Shop Button */}
                             <Button

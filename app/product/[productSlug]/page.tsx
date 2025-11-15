@@ -12,47 +12,48 @@ const page = async ({ params }: Props) => {
   const { productSlug } = await params;
 
   // 🔍 Fetch product redirect link
+  // ⚠️ REDIRECT FEATURE DISABLED - causes too much traffic
+  // Keeping this commented in case we need it later
+  /*
   const product = await prisma.product.findUnique({
     where: { slug: productSlug },
     select: { redirectLink: true },
   });
 
   // ✅ If redirect link exists, show redirect screen within layout
-if (product?.redirectLink) {
-  return (
-    <div
-      style={{
-        minHeight: 'calc(100vh - 200px)', // leave space for navbar + footer
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        padding: '2rem',
-      }}
-    >
-      <meta httpEquiv="refresh" content={`1;url=${product.redirectLink}`} />
+  if (product?.redirectLink) {
+    return (
+      <div
+        style={{
+          minHeight: 'calc(100vh - 200px)', // leave space for navbar + footer
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          padding: '2rem',
+        }}
+      >
+        <meta httpEquiv="refresh" content={`1;url=${product.redirectLink}`} />
+        <h1 style={{ fontSize: '1.5rem', color: '#333', marginBottom: '1rem' }}>
+          Redirecting to new product page...
+        </h1>
+        <p style={{ color: '#777' }}>
+          You'll be redirected shortly. If not,{' '}
+          
+            href={product.redirectLink}
+            style={{ color: '#0070f3', textDecoration: 'underline' }}
+          >
+            click here
+          </a>
+          .
+        </p>
+      </div>
+    );
+  }
+  */
 
-      <h1 style={{ fontSize: '1.5rem', color: '#333', marginBottom: '1rem' }}>
-        Redirecting to new product page...
-      </h1>
-
-      <p style={{ color: '#777' }}>
-        You’ll be redirected shortly. If not,{' '}
-        <a
-          href={product.redirectLink}
-          style={{ color: '#0070f3', textDecoration: 'underline' }}
-        >
-          click here
-        </a>
-        .
-      </p>
-    </div>
-  );
-}
-
-
-  // 🟢 Otherwise, render your normal ProductPage
+  // 🟢 Render normal ProductPage (keeping all products on same site)
   return <ProductPage productSlug={productSlug} />;
 };
 
