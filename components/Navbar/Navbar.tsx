@@ -172,8 +172,8 @@ const Navbar = () => {
         { title: "Contact us", href: "/contact" },
     ];
 
-    const handleProductClick = (productId: string) => {
-        router.push(`/product/${productId}`);
+    const handleProductClick = (productSlug: string) => {
+        router.push(`/product/${productSlug}`);
         setShowResults(false);
     };
 
@@ -341,13 +341,13 @@ const Navbar = () => {
                                                     <div
                                                         key={product.id}
                                                         className="p-2 hover:bg-gray-100 cursor-pointer flex items-center border-b border-gray-200"
-                                                        onMouseDown={() => handleProductClick(product.id)}
+                                                        onMouseDown={() => handleProductClick(product.slug)}
                                                         role="option"
                                                         tabIndex={0}
                                                         onKeyDown={(e) => {
                                                             if (e.key === 'Enter' || e.key === ' ') {
                                                                 e.preventDefault();
-                                                                handleProductClick(product.id);
+                                                                handleProductClick(product.slug);
                                                             }
                                                         }}
                                                         aria-label={`${product.name} - $${product.currentPrice.toFixed(2)}`}
